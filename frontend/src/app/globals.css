@@ -1,0 +1,315 @@
+@import "tailwindcss";
+
+/* ── Design Tokens ─────────────────────────────────────────── */
+:root {
+  /* Primary palette */
+  --church-navy:        hsl(212, 51%, 24%);
+  --church-navy-light:  hsl(212, 51%, 32%);
+  --church-navy-dark:   hsl(212, 51%, 16%);
+  --church-gold:        hsl(41, 74%, 47%);
+  --church-gold-light:  hsl(41, 74%, 56%);
+  --church-gold-dark:   hsl(41, 74%, 38%);
+
+  /* Neutral tones */
+  --background:  hsl(30, 7%, 97%);
+  --foreground:  hsl(24, 5%, 11%);
+  --muted:       hsl(30, 5%, 94%);
+  --border:      hsl(30, 5%, 88%);
+
+  /* Shadow system */
+  --shadow-sm:  0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md:  0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg:  0 12px 32px rgba(0,0,0,0.10);
+  --shadow-xl:  0 24px 48px rgba(0,0,0,0.12);
+
+  /* Transitions */
+  --transition-fast:   150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base:   250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow:   400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: monospace;
+  --font-serif: var(--font-playfair);
+}
+
+/* ── Base Styles ───────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-serif {
+  font-family: var(--font-playfair), Georgia, serif;
+}
+
+/* ── Custom Scrollbar ──────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--muted);
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(212, 30%, 70%);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--church-navy-light);
+}
+
+/* ── Focus Ring ───────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--church-gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Keyframe Animations ──────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0);     }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 hsla(41, 74%, 47%, 0.4); }
+  50%       { box-shadow: 0 0 0 8px hsla(41, 74%, 47%, 0);  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+
+/* ── Animation Utility Classes ────────────────────────────── */
+.animate-fade-in {
+  animation: fade-in var(--transition-base) ease both;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Stagger helpers for list items */
+.animate-stagger > *:nth-child(1)  { animation-delay: 0ms; }
+.animate-stagger > *:nth-child(2)  { animation-delay: 60ms; }
+.animate-stagger > *:nth-child(3)  { animation-delay: 120ms; }
+.animate-stagger > *:nth-child(4)  { animation-delay: 180ms; }
+.animate-stagger > *:nth-child(5)  { animation-delay: 240ms; }
+.animate-stagger > *:nth-child(6)  { animation-delay: 300ms; }
+
+/* ── Gradient Utilities ────────────────────────────────────── */
+.gradient-navy {
+  background: linear-gradient(135deg, var(--church-navy-dark) 0%, var(--church-navy-light) 100%);
+}
+
+.gradient-gold {
+  background: linear-gradient(135deg, var(--church-gold-dark) 0%, var(--church-gold-light) 100%);
+}
+
+.gradient-hero {
+  background: linear-gradient(
+    135deg,
+    hsl(212, 51%, 18%) 0%,
+    hsl(212, 51%, 26%) 50%,
+    hsl(220, 40%, 22%) 100%
+  );
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, var(--church-gold) 0%, var(--church-gold-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Glassmorphism Card ───────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.glass-navy {
+  background: rgba(30, 58, 95, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ── Skeleton Loading ─────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    hsl(30, 5%, 90%) 25%,
+    hsl(30, 5%, 96%) 50%,
+    hsl(30, 5%, 90%) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+}
+
+/* ── Interactive Hover Effects ────────────────────────────── */
+.hover-lift {
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.hover-glow-gold {
+  transition: box-shadow var(--transition-base);
+}
+.hover-glow-gold:hover {
+  box-shadow: 0 0 20px hsla(41, 74%, 47%, 0.35);
+}
+
+/* ── Button Styles ────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 9999px;
+  background: var(--church-navy);
+  color: white;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  letter-spacing: 0.01em;
+  transition: background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: var(--church-navy-light);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(30, 58, 95, 0.3);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 9999px;
+  background: var(--church-gold);
+  color: white;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  transition: background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+  cursor: pointer;
+}
+.btn-gold:hover {
+  background: var(--church-gold-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px hsla(41, 74%, 47%, 0.35);
+}
+.btn-gold:active { transform: translateY(0); }
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6875rem 1.5rem;
+  border-radius: 9999px;
+  border: 2px solid var(--church-navy);
+  color: var(--church-navy);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  background: transparent;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+.btn-outline:hover {
+  background: var(--church-navy);
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* ── Card Styles ──────────────────────────────────────────── */
+.card {
+  background: white;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+}
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+.card-elevated:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* ── Section Dividers ─────────────────────────────────────── */
+.divider-gold {
+  height: 3px;
+  width: 48px;
+  background: linear-gradient(90deg, var(--church-gold), var(--church-gold-light));
+  border-radius: 9999px;
+  margin: 0 auto;
+}
+
+/* ── Text Utilities ───────────────────────────────────────── */
+.text-balance {
+  text-wrap: balance;
+}
+
+/* ── Selection ────────────────────────────────────────────── */
+::selection {
+  background: hsla(41, 74%, 47%, 0.25);
+  color: var(--church-navy-dark);
+}
+

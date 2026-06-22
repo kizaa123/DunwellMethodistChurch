@@ -1,0 +1,559 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import PageHeader from "@/components/PageHeader";
+import { User, Announcement } from "@/types";
+import { api } from "@/lib/api";
+import { ministries } from "@/lib/data";
+
+export default function MemberProfilePage() {
+  const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [loadingAnn, setLoadingAnn] = useState(true);
+
+  // Registered ministries list state
+  const [joinedMinistryIds, setJoinedMinistryIds] = useState<string[]>([]);
+
+  // Prayer Request Form State
+  const [prayerRequest, setPrayerRequest] = useState("");
+  const [prayerStatus, setPrayerStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  // Testimony Form State
+  const [testimony, setTestimony] = useState("");
+  const [testimonyImage, setTestimonyImage] = useState<string | null>(null);
+  const [testimonyImagePreview, setTestimonyImagePreview] = useState<string | null>(null);
+  const [testimonyStatus, setTestimonyStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  // Tab State
+  const [activeTab, setActiveTab] = useState<"overview" | "giving" | "interact">("overview");
+
+  // Giving Form State
+  const [givingAmount, setGivingAmount] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("Credit Card");
+  const [givingStatus, setGivingStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  function handleTestimonyImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image must be less than 5MB");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+      setTestimonyImage(base64);
+      setTestimonyImagePreview(base64);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function handleTestimonySubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!testimony.trim() || !user) return;
+    setTestimonyStatus("loading");
+    try {
+      let imageUrl: string | undefined;
+      if (testimonyImage) {
+        const uploadResult = await api.admin.uploadFile(testimonyImage, "testimony.jpg");
+        imageUrl = uploadResult.url;
+      }
+      await api.createTestimony({
+        memberName: user.name,
+        testimony: testimony,
+        imageUrl,
+      });
+      setTestimonyStatus("success");
+      setTestimony("");
+      setTestimonyImage(null);
+      setTestimonyImagePreview(null);
+      setTimeout(() => setTestimonyStatus("idle"), 4000);
+    } catch (err) {
+      console.error(err);
+      setTestimonyStatus("error");
+    }
+  }
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
+    if (!stored || !token) {
+      router.push("/members/login");
+      return;
+    }
+    setUser(JSON.parse(stored));
+
+    // Load registered ministries from local storage
+    const savedMinistries = localStorage.getItem("joined-ministries");
+    if (savedMinistries) {
+      setJoinedMinistryIds(JSON.parse(savedMinistries));
+    }
+
+    // Fetch announcements
+    api.getAnnouncements()
+      .then((data) => setAnnouncements(data))
+      .catch(console.error)
+      .finally(() => setLoadingAnn(false));
+  }, [router]);
+
+  function handleLogout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    router.push("/members/login");
+  }
+
+  async function handlePrayerSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!prayerRequest.trim() || !user) return;
+    setPrayerStatus("loading");
+    try {
+      await api.createPrayerRequest({
+        memberName: user.name,
+        email: user.email,
+        request: prayerRequest,
+      });
+      setPrayerStatus("success");
+      setPrayerRequest("");
+      setTimeout(() => setPrayerStatus("idle"), 4000);
+    } catch (err) {
+      console.error(err);
+      setPrayerStatus("error");
+    }
+  }
+
+  async function handleGivingSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const amount = parseFloat(givingAmount);
+    if (isNaN(amount) || amount <= 0) {
+      alert("Please enter a valid amount");
+      return;
+    }
+    setGivingStatus("loading");
+    try {
+      await api.createDonation({
+        amount,
+        paymentMethod,
+      });
+      setGivingStatus("success");
+      setGivingAmount("");
+      setTimeout(() => setGivingStatus("idle"), 4000);
+    } catch (err) {
+      console.error(err);
+      setGivingStatus("error");
+    }
+  }
+
+  if (!user) return null;
+
+  // Filter ministries that the member has registered/joined
+  const memberMinistries = ministries.filter((m) => joinedMinistryIds.includes(m.id));
+
+  return (
+    <>
+      <PageHeader title="Member Portal" subtitle={`Welcome back, ${user.name}`} />
+
+      <section className="py-12 bg-stone-50 min-h-[70vh]">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-8 animate-fade-in">
+          
+          {/* Header Banner Card */}
+          <div
+            className="rounded-3xl p-6 md:p-8 text-white relative overflow-hidden shadow-lg border border-[#1e3a5f]/10"
+            style={{
+              background: "linear-gradient(135deg, hsl(212,51%,18%) 0%, hsl(212,51%,28%) 50%, hsl(220,40%,22%) 100%)"
+            }}
+          >
+            {/* Watermark grid */}
+            <div
+              className="absolute inset-0 opacity-[0.05]"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(255,255,255,.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.4) 1px, transparent 1px)",
+                backgroundSize: "24px 24px"
+              }}
+            />
+            <div className="relative flex flex-col md:flex-row justify-between items-center gap-6">
+              <div className="flex flex-col md:flex-row items-center gap-5 text-center md:text-left">
+                <div className="h-20 w-20 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white border border-white/20 font-serif text-4xl shrink-0 shadow-inner">
+                  {user.name.charAt(0)}
+                </div>
+                <div>
+                  <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5">
+                    <h2 className="font-serif text-2xl font-bold">{user.name}</h2>
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] font-bold tracking-wider uppercase">
+                      {user.role}
+                    </span>
+                  </div>
+                  <p className="text-white/60 text-sm mt-1">{user.email}</p>
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={handleLogout}
+                  className="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/20 text-white text-xs font-semibold transition-all cursor-pointer shadow-sm hover:shadow"
+                >
+                  🚪 Logout
+                </button>
+              </div>
+            </div>
+
+            {/* Navigation Tabs */}
+            <div className="flex flex-wrap gap-2 mt-8 pt-6 border-t border-white/10">
+              {[
+                { id: "overview", label: "🏠 Dashboard", desc: "Announcements & Groups" },
+                { id: "giving", label: "💝 Give Offering", desc: "Tithes & Support" },
+                { id: "interact", label: "📝 Prayer & Testimony", desc: "Share & Request" }
+              ].map((tab) => {
+                const active = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as any)}
+                    className={`px-5 py-2.5 rounded-xl text-left transition-all duration-150 cursor-pointer flex-1 min-w-[140px] ${
+                      active
+                        ? "bg-[#c9a227] text-white shadow-md scale-[1.02]"
+                        : "bg-white/5 hover:bg-white/10 text-white/80 hover:text-white"
+                    }`}
+                  >
+                    <p className="font-bold text-xs">{tab.label}</p>
+                    <p className="text-[9px] opacity-75 mt-0.5 hidden sm:block">{tab.desc}</p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ──────────────── TAB CONTENT ──────────────── */}
+          <div className="transition-all duration-300">
+            {activeTab === "overview" && (
+              <div className="grid md:grid-cols-3 gap-8 items-start">
+                {/* Left Columns (wider): Announcements */}
+                <div className="md:col-span-2 space-y-6">
+                  <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200">
+                    <div className="flex items-center gap-3 mb-5 pb-3 border-b border-stone-100">
+                      <div className="h-9 w-9 rounded-xl flex items-center justify-center bg-amber-50 text-amber-600 shrink-0 border border-amber-100">
+                        📢
+                      </div>
+                      <div>
+                        <h3 className="font-serif text-base font-bold text-[#1e3a5f]">Church Announcements</h3>
+                        <p className="text-xs text-stone-500">Latest updates from church leadership</p>
+                      </div>
+                    </div>
+
+                    {loadingAnn ? (
+                      <div className="text-center py-10 text-stone-400 text-sm">Loading announcements...</div>
+                    ) : announcements.length === 0 ? (
+                      <div className="text-center py-10 text-stone-400 text-sm">
+                        <p className="text-2xl mb-2">🔔</p>
+                        No announcements at this time.
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {announcements.map((ann, i) => (
+                          <div key={ann.id} className="relative rounded-2xl border border-stone-150 p-5 bg-stone-50/40">
+                            <div
+                              className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl"
+                              style={{ background: i === 0 ? "hsl(41,74%,47%)" : "hsl(212,51%,35%)" }}
+                            />
+                            <div className="pl-3">
+                              <div className="flex items-start justify-between gap-3 mb-1.5">
+                                <h4 className="font-bold text-[#1e3a5f] text-sm leading-snug">{ann.title}</h4>
+                                {i === 0 && (
+                                  <span className="shrink-0 text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+                                    New
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs text-stone-600 leading-relaxed whitespace-pre-line">{ann.content}</p>
+                              <p className="text-[10px] text-stone-400 mt-3 font-semibold">
+                                Posted {new Date(ann.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Right Column: Joined Ministries */}
+                <div className="md:col-span-1 space-y-6">
+                  <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200">
+                    <div className="flex items-center gap-3 mb-4 pb-3 border-b border-stone-100">
+                      <div className="h-9 w-9 rounded-xl flex items-center justify-center bg-blue-50 text-[#1e3a5f] shrink-0 border border-blue-100">
+                        ⛪
+                      </div>
+                      <div>
+                        <h3 className="font-serif text-base font-bold text-[#1e3a5f]">My Ministries</h3>
+                        <p className="text-xs text-stone-500">Your registered groups</p>
+                      </div>
+                    </div>
+
+                    {memberMinistries.length === 0 ? (
+                      <div className="text-center py-8 text-stone-500">
+                        <p className="text-xs leading-relaxed text-stone-500">You haven&apos;t joined any ministries yet.</p>
+                        <Link
+                          href="/ministries"
+                          className="inline-block mt-3 text-xs font-bold text-[#c9a227] hover:underline"
+                        >
+                          Find a Ministry →
+                        </Link>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {memberMinistries.map((ministry) => (
+                          <div key={ministry.id} className="p-4 rounded-2xl border border-stone-100 bg-stone-50/50 hover:bg-stone-50 transition-colors">
+                            <h4 className="font-serif text-sm font-bold text-[#1e3a5f]">{ministry.name}</h4>
+                            <p className="text-[9px] text-[#c9a227] font-semibold mt-0.5">Leader: {ministry.leader}</p>
+                            <Link
+                              href="/ministries"
+                              className="inline-flex items-center gap-1 mt-3 text-[10px] font-bold text-[#1e3a5f] hover:underline"
+                            >
+                              Go to Ministry
+                              <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </Link>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 💝 GIVING TAB */}
+            {activeTab === "giving" && (
+              <div className="max-w-2xl mx-auto">
+                <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-stone-200">
+                  <div className="flex items-center gap-3 mb-6 pb-4 border-b border-stone-100">
+                    <div className="h-10 w-10 rounded-xl flex items-center justify-center bg-amber-50 text-amber-600 text-xl border border-amber-100 shadow-inner">
+                      💝
+                    </div>
+                    <div>
+                      <h3 className="font-serif text-lg font-bold text-[#1e3a5f]">Give Offering &amp; Tithes</h3>
+                      <p className="text-xs text-stone-500">Support the ministry and church programs safely</p>
+                    </div>
+                  </div>
+
+                  <form onSubmit={handleGivingSubmit} className="space-y-6">
+                    {givingStatus === "success" && (
+                      <div className="p-4 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200">
+                        ✓ Thank you! Your offering has been received. God bless your giving.
+                      </div>
+                    )}
+                    {givingStatus === "error" && (
+                      <div className="p-4 rounded-xl bg-red-50 text-red-800 text-xs font-semibold border border-red-200">
+                        ❌ Failed to process donation. Please check details and try again.
+                      </div>
+                    )}
+
+                    {/* Amount field */}
+                    <div>
+                      <label className="block text-xs font-bold text-stone-600 mb-2 uppercase tracking-wider">
+                        Offering Amount ($)
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 font-bold text-lg">$</span>
+                        <input
+                          type="number"
+                          required
+                          min="1"
+                          step="0.01"
+                          value={givingAmount}
+                          onChange={(e) => setGivingAmount(e.target.value)}
+                          placeholder="0.00"
+                          className="w-full pl-9 pr-4 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]/30 focus:border-[#1e3a5f] text-base font-medium text-stone-800"
+                        />
+                      </div>
+
+                      {/* Presets */}
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        {[10, 20, 50, 100, 250, 500].map((amt) => (
+                          <button
+                            key={amt}
+                            type="button"
+                            onClick={() => setGivingAmount(amt.toString())}
+                            className="px-4 py-2 text-xs font-bold rounded-lg border border-stone-200 hover:border-[#1e3a5f] hover:bg-stone-50 text-stone-600 transition-colors cursor-pointer"
+                          >
+                            ${amt}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Payment Method field */}
+                    <div>
+                      <label className="block text-xs font-bold text-stone-600 mb-2 uppercase tracking-wider">
+                        Payment Method
+                      </label>
+                      <select
+                        value={paymentMethod}
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]/30 focus:border-[#1e3a5f] text-sm text-stone-700 bg-white"
+                      >
+                        {["Credit Card", "Mobile Money", "Bank Transfer", "PayPal"].map((method) => (
+                          <option key={method} value={method}>
+                            {method}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Security Badge */}
+                    <div className="flex items-center gap-2 p-3 rounded-xl bg-blue-50/50 border border-blue-100 text-stone-500 text-[11px]">
+                      <span>🔒</span>
+                      <span>Your offering is processed securely. All contributions are tax-deductible.</span>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={givingStatus === "loading"}
+                      className="w-full py-3.5 rounded-xl bg-[#1e3a5f] hover:bg-[#2a5082] text-white text-sm font-bold tracking-wide transition-colors cursor-pointer shadow-md disabled:opacity-60"
+                    >
+                      {givingStatus === "loading" ? "Processing Offering..." : "Submit Offering"}
+                    </button>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {/* 📝 INTERACT TAB (PRAYER & TESTIMONY) */}
+            {activeTab === "interact" && (
+              <div className="grid md:grid-cols-2 gap-8 items-start">
+                {/* Prayer Request Form */}
+                <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200 flex flex-col h-full">
+                  <div className="flex items-center gap-3 mb-4 pb-3 border-b border-stone-100">
+                    <div className="h-10 w-10 rounded-xl flex items-center justify-center bg-blue-50 text-blue-600 text-xl border border-blue-100 shadow-inner">
+                      🙏
+                    </div>
+                    <div>
+                      <h3 className="font-serif text-base font-bold text-[#1e3a5f]">Request Prayer</h3>
+                      <p className="text-xs text-stone-500">Submit requests directly to pastors</p>
+                    </div>
+                  </div>
+
+                  <form onSubmit={handlePrayerSubmit} className="flex-1 flex flex-col justify-between space-y-4">
+                    <div>
+                      <p className="text-xs text-stone-500 leading-relaxed mb-4">
+                        We believe in the power of prayer. Submit your request and our leadership will pray over it. All requests are kept strictly confidential.
+                      </p>
+                      <textarea
+                        required
+                        rows={5}
+                        value={prayerRequest}
+                        onChange={(e) => setPrayerRequest(e.target.value)}
+                        placeholder="Write your request here..."
+                        className="w-full px-4 py-3 text-xs rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]/30 resize-none text-stone-700 leading-relaxed"
+                      />
+                    </div>
+                    <div>
+                      {prayerStatus === "success" && (
+                        <p className="text-emerald-600 text-xs font-semibold mb-2">✓ Prayer request submitted successfully!</p>
+                      )}
+                      {prayerStatus === "error" && (
+                        <p className="text-red-600 text-xs font-semibold mb-2">❌ Failed to submit request. Please try again.</p>
+                      )}
+                      <button
+                        type="submit"
+                        disabled={prayerStatus === "loading"}
+                        className="w-full py-2.5 rounded-xl bg-[#1e3a5f] text-white text-xs font-semibold hover:bg-[#2a5082] transition-colors disabled:opacity-60 cursor-pointer shadow-sm"
+                      >
+                        {prayerStatus === "loading" ? "Submitting..." : "Submit Prayer Request"}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                {/* Share Testimony Form */}
+                <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200 flex flex-col h-full">
+                  <div className="flex items-center gap-3 mb-4 pb-3 border-b border-stone-100">
+                    <div className="h-10 w-10 rounded-xl flex items-center justify-center bg-amber-50 text-amber-600 text-xl border border-amber-100 shadow-inner">
+                      ✨
+                    </div>
+                    <div>
+                      <h3 className="font-serif text-base font-bold text-[#1e3a5f]">Share Testimony</h3>
+                      <p className="text-xs text-stone-500">Inspire the church community</p>
+                    </div>
+                  </div>
+
+                  <form onSubmit={handleTestimonySubmit} className="flex-1 flex flex-col justify-between space-y-4">
+                    <div>
+                      <p className="text-xs text-stone-500 leading-relaxed mb-4">
+                        Share how God has worked in your life! Approved testimonies will be shown on the live screens to inspire others.
+                      </p>
+                      <textarea
+                        required
+                        rows={4}
+                        value={testimony}
+                        onChange={(e) => setTestimony(e.target.value)}
+                        placeholder="Write your testimony here..."
+                        className="w-full px-4 py-3 text-xs rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]/30 resize-none text-stone-700 leading-relaxed"
+                      />
+                      
+                      {/* Image upload */}
+                      <div className="mt-4">
+                        <label className="block text-[10px] font-bold text-stone-500 mb-2 uppercase tracking-wider">
+                          Attach a Photo (optional, max 5MB)
+                        </label>
+                        <label className="flex items-center gap-2.5 cursor-pointer p-3 rounded-xl border border-dashed border-stone-300 hover:border-[#c9a227] hover:bg-amber-50/10 transition-colors group">
+                          <span className="text-xl">🖼️</span>
+                          <span className="text-xs text-stone-500 group-hover:text-[#c9a227] transition-colors">
+                            {testimonyImage ? "Change attached photo" : "Select photo file..."}
+                          </span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleTestimonyImageChange}
+                          />
+                        </label>
+                        {testimonyImagePreview && (
+                          <div className="mt-3 relative border border-stone-200 rounded-xl overflow-hidden shadow-inner bg-stone-50">
+                            <img
+                              src={testimonyImagePreview}
+                              alt="Testimony upload preview"
+                              className="w-full h-24 object-cover"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => { setTestimonyImage(null); setTestimonyImagePreview(null); }}
+                              className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-black/60 hover:bg-black/80 text-white text-sm flex items-center justify-center transition-colors"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      {testimonyStatus === "success" && (
+                        <p className="text-emerald-600 text-xs font-semibold mb-2">✓ Testimony shared for approval!</p>
+                      )}
+                      {testimonyStatus === "error" && (
+                        <p className="text-red-600 text-xs font-semibold mb-2">❌ Failed to submit testimony. Please try again.</p>
+                      )}
+                      <button
+                        type="submit"
+                        disabled={testimonyStatus === "loading"}
+                        className="w-full py-2.5 rounded-xl bg-[#c9a227] hover:bg-[#b8911f] text-white text-xs font-semibold transition-colors disabled:opacity-60 cursor-pointer shadow-sm"
+                      >
+                        {testimonyStatus === "loading" ? "Sharing..." : "Share Testimony"}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+          </div>
+
+        </div>
+      </section>
+    </>
+  );
+}

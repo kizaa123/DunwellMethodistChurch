@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  PASTOR
+  MEMBER
+  VISITOR
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(MEMBER)
+  createdAt DateTime @default(now()) @map("created_at")
+  member    Member?
+
+  @@map("users")
+}
+
+model Member {
+  id         String  @id @default(cuid())
+  userId     String  @unique @map("user_id")
+  phone      String?
+  address    String?
+  department String?
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  donations  Donation[]
+
+  @@map("members")
+}
+
+model Sermon {
+  id          String   @id @default(cuid())
+  title       String
+  speaker     String
+  description String
+  videoUrl    String?  @map("video_url")
+  audioUrl    String?  @map("audio_url")
+  notesUrl    String?  @map("notes_url")
+  thumbnail   String?
+  date        DateTime @default(now())
+  isLive      Boolean  @default(false) @map("is_live")
+
+  @@map("sermons")
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  location    String
+  eventDate   DateTime @map("event_date")
+  image       String?
+  liveUrl     String?  @map("live_url")
+
+  @@map("events")
+}
+
+model Donation {
+  id            String   @id @default(cuid())
+  memberId      String?  @map("member_id")
+  amount        Float
+  paymentMethod String   @map("payment_method")
+  date          DateTime @default(now())
+  member        Member?  @relation(fields: [memberId], references: [id])
+
+  @@map("donations")
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("announcements")
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("contact_messages")
+}
+
+model GalleryItem {
+  id        String   @id @default(cuid())
+  src       String
+  alt       String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("gallery_items")
+}
+
+model PrayerRequest {
+  id         String   @id @default(cuid())
+  memberName String   @map("member_name")
+  email      String
+  request    String
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("prayer_requests")
+}
+
+model Testimony {
+  id         String   @id @default(cuid())
+  memberName String   @map("member_name")
+  testimony  String
+  imageUrl   String?  @map("image_url")
+  approved   Boolean  @default(false)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("testimonies")
+}
+
