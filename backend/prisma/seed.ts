@@ -68,6 +68,7 @@ async function main() {
             description: "A week of fun, fellowship, and spiritual growth for youth ages 12-18.",
             location: "Camp Dunwell, Lakeview",
             eventDate: new Date("2026-07-15"),
+            requiresRegistration: true,
           },
         });
       } else {
@@ -77,6 +78,7 @@ async function main() {
             description: "Join us as we serve our local community with food, clothing, and prayer.",
             location: "Church Grounds",
             eventDate: new Date("2026-07-22"),
+            requiresRegistration: true,
           },
         });
       }
@@ -110,6 +112,41 @@ async function main() {
       await prisma.galleryItem.create({ data: item });
     }
     console.log("Gallery seeded.");
+  }
+
+  // Ministries
+  const existingMinistries = await prisma.ministry.findMany();
+  if (existingMinistries.length === 0) {
+    const ministriesList = [
+      {
+        name: "Youth Ministry",
+        description: "Empowering the next generation to know Christ and make Him known through dynamic programs, mentorship, and community.",
+        leader: "Pastor Michael Chen",
+        image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80",
+      },
+      {
+        name: "Women's Ministry",
+        description: "Building sisterhood through Bible study, prayer groups, and fellowship events that strengthen faith and friendships.",
+        leader: "Deaconess Mary Johnson",
+        image: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=800&q=80",
+      },
+      {
+        name: "Men's Ministry",
+        description: "Equipping men to be spiritual leaders in their homes, workplaces, and communities through accountability and service.",
+        leader: "Brother David Thompson",
+        image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&q=80",
+      },
+      {
+        name: "Children's Ministry",
+        description: "Creating a safe, fun environment where children learn about God's love through age-appropriate teaching and activities.",
+        leader: "Sister Rachel Adams",
+        image: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&q=80",
+      },
+    ];
+    for (const m of ministriesList) {
+      await prisma.ministry.create({ data: m });
+    }
+    console.log("Ministries seeded.");
   }
 
   console.log("Seed completed. Admin user:", admin.email);

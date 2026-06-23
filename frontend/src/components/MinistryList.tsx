@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ministries } from "@/lib/data";
+import { api } from "@/lib/api";
 
 export default function MinistryList() {
   const router = useRouter();
+  const [ministriesList, setMinistriesList] = useState<import("@/types").Ministry[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isMember, setIsMember] = useState(false);
   const [joinedMinistries, setJoinedMinistries] = useState<string[]>([]);
   const [showPrompt, setShowPrompt] = useState(false);
@@ -23,6 +25,12 @@ export default function MinistryList() {
         setJoinedMinistries(JSON.parse(saved));
       }
     }
+
+    // Fetch ministries from API
+    api.getMinistries()
+      .then(setMinistriesList)
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
 
   const handleJoin = (ministryId: string, ministryName: string) => {
@@ -50,24 +58,48 @@ export default function MinistryList() {
     router.push("/members/login");
   };
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-stone-400">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1e3a5f] mb-4"></div>
+        <p className="text-sm">Loading ministries...</p>
+      </div>
+    );
+  }
+
+  if (ministriesList.length === 0) {
+    return (
+      <div className="text-center py-20 text-stone-500">
+        <p className="text-3xl mb-4">⛪</p>
+        <p className="text-sm">No ministries available at this time. Check back later!</p>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="grid md:grid-cols-2 gap-8">
-        {ministries.map((ministry) => {
+        {ministriesList.map((ministry) => {
           const isJoined = joinedMinistries.includes(ministry.id);
 
           return (
             <article
               key={ministry.id}
-              className="bg-white rounded-2xl overflow-hidden shadow-sm border border-stone-200 hover:shadow-md transition-shadow flex flex-col h-full"
+              className="bg-white rounded-2xl overflow-hidden shadow-sm border border-stone-200 hover:shadow-md transition-shadow flex flex-col h-full animate-fade-in"
             >
               {/* Image */}
               <div className="aspect-[16/7] overflow-hidden bg-stone-100 relative group">
-                <img
-                  src={ministry.image}
-                  alt={ministry.name}
-                  className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
-                />
+                {ministry.image ? (
+                  <img
+                    src={ministry.image}
+                    alt={ministry.name}
+                    className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-[#1e3a5f]/20 to-[#c9a227]/20 flex items-center justify-center font-serif text-3xl text-[#1e3a5f] font-bold">
+                    {ministry.name.charAt(0)}
+                  </div>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-stone-900/50 via-transparent to-transparent opacity-60" />
               </div>
 
@@ -139,3 +171,4 @@ export default function MinistryList() {
     </>
   );
 }
+

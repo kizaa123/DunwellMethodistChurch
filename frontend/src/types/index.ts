@@ -28,6 +28,27 @@ export interface Event {
   location: string;
   eventDate: string;
   image?: string;
+  liveUrl?: string;
+  requiresRegistration?: boolean;
+  registrationCount?: number;
+}
+
+export interface EventRegistration {
+  id: string;
+  eventId: string;
+  name: string;
+  email: string;
+  guests: number;
+  notes?: string | null;
+  createdAt: string;
+  eventTitle?: string;
+  event?: {
+    id: string;
+    title: string;
+    location: string;
+    eventDate: string;
+    image?: string | null;
+  };
 }
 
 export interface Ministry {

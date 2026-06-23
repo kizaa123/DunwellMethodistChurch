@@ -106,14 +106,42 @@ export class SermonService {
 }
 
 export class EventService {
+  private eventInclude = {
+    _count: { select: { registrations: true } },
+  };
+
+  private formatEvent(event: {
+    id: string;
+    title: string;
+    description: string;
+    location: string;
+    eventDate: Date;
+    image: string | null;
+    liveUrl: string | null;
+    requiresRegistration: boolean;
+    _count?: { registrations: number };
+  }) {
+    return {
+      ...event,
+      registrationCount: event._count?.registrations ?? 0,
+    };
+  }
+
   async getAll() {
-    return prisma.event.findMany({ orderBy: { eventDate: "asc" } });
+    const events = await prisma.event.findMany({
+      orderBy: { eventDate: "asc" },
+      include: this.eventInclude,
+    });
+    return events.map((e) => this.formatEvent(e));
   }
 
   async getById(id: string) {
-    const event = await prisma.event.findUnique({ where: { id } });
+    const event = await prisma.event.findUnique({
+      where: { id },
+      include: this.eventInclude,
+    });
     if (!event) throw new Error("Event not found");
-    return event;
+    return this.formatEvent(event);
   }
 
   async create(data: {
@@ -122,10 +150,17 @@ export class EventService {
     location: string;
     eventDate: string;
     image?: string;
+    requiresRegistration?: boolean;
   }) {
-    return prisma.event.create({
-      data: { ...data, eventDate: new Date(data.eventDate) },
+    const event = await prisma.event.create({
+      data: {
+        ...data,
+        eventDate: new Date(data.eventDate),
+        requiresRegistration: data.requiresRegistration ?? false,
+      },
+      include: this.eventInclude,
     });
+    return this.formatEvent(event);
   }
 
   async update(id: string, data: {
@@ -134,14 +169,20 @@ export class EventService {
     location?: string;
     eventDate?: string;
     image?: string;
+    requiresRegistration?: boolean;
   }) {
     const event = await prisma.event.findUnique({ where: { id } });
     if (!event) throw new Error("Event not found");
 
-    return prisma.event.update({
+    const updated = await prisma.event.update({
       where: { id },
-      data: { ...data, ...(data.eventDate && { eventDate: new Date(data.eventDate) }) },
+      data: {
+        ...data,
+        ...(data.eventDate && { eventDate: new Date(data.eventDate) }),
+      },
+      include: this.eventInclude,
     });
+    return this.formatEvent(updated);
   }
 
   async delete(id: string) {
@@ -151,15 +192,202 @@ export class EventService {
   }
 }
 
+export class EventRegistrationService {
+  async register(
+    eventId: string,
+    data: { name: string; email: string; guests?: number; notes?: string },
+    userId?: string
+  ) {
+    const event = await prisma.event.findUnique({ where: { id: eventId } });
+    if (!event) throw new Error("Event not found");
+
+    const email = data.email.trim().toLowerCase();
+    const guests = Math.min(Math.max(Number(data.guests) || 1, 1), 20);
+
+    let memberId: string | undefined;
+    if (userId) {
+      const member = await prisma.member.findUnique({ where: { userId } });
+      if (member) memberId = member.id;
+    }
+
+    const existing = await prisma.eventRegistration.findUnique({
+      where: { eventId_email: { eventId, email } },
+    });
+    if (existing) {
+      throw new Error("You are already registered for this event");
+    }
+
+    const registration = await prisma.eventRegistration.create({
+      data: {
+        eventId,
+        memberId,
+        name: data.name.trim(),
+        email,
+        guests,
+        notes: data.notes?.trim() || null,
+      },
+      include: { event: { select: { title: true, eventDate: true } } },
+    });
+
+    return {
+      id: registration.id,
+      eventId: registration.eventId,
+      name: registration.name,
+      email: registration.email,
+      guests: registration.guests,
+      notes: registration.notes,
+      createdAt: registration.createdAt.toISOString(),
+      eventTitle: registration.event.title,
+    };
+  }
+
+  async cancel(eventId: string, email: string, userId?: string) {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const registration = await prisma.eventRegistration.findUnique({
+      where: { eventId_email: { eventId, email: normalizedEmail } },
+    });
+    if (!registration) throw new Error("Registration not found");
+
+    if (userId) {
+      const member = await prisma.member.findUnique({ where: { userId } });
+      const isOwner =
+        registration.email === normalizedEmail ||
+        (member && registration.memberId === member.id);
+      if (!isOwner) throw new Error("Not authorized to cancel this registration");
+    }
+
+    await prisma.eventRegistration.delete({ where: { id: registration.id } });
+    return { message: "Registration cancelled" };
+  }
+
+  async getMyRegistration(eventId: string, email: string) {
+    const registration = await prisma.eventRegistration.findUnique({
+      where: { eventId_email: { eventId, email: email.trim().toLowerCase() } },
+    });
+    if (!registration) return null;
+    return {
+      id: registration.id,
+      eventId: registration.eventId,
+      name: registration.name,
+      email: registration.email,
+      guests: registration.guests,
+      notes: registration.notes,
+      createdAt: registration.createdAt.toISOString(),
+    };
+  }
+
+  async getByUserId(userId: string) {
+    const member = await prisma.member.findUnique({ where: { userId } });
+    if (!member) return [];
+
+    const registrations = await prisma.eventRegistration.findMany({
+      where: { memberId: member.id },
+      include: { event: true },
+      orderBy: { event: { eventDate: "asc" } },
+    });
+
+    return registrations.map((r) => ({
+      id: r.id,
+      eventId: r.eventId,
+      name: r.name,
+      email: r.email,
+      guests: r.guests,
+      notes: r.notes,
+      createdAt: r.createdAt.toISOString(),
+      event: {
+        id: r.event.id,
+        title: r.event.title,
+        location: r.event.location,
+        eventDate: r.event.eventDate.toISOString(),
+        image: r.event.image,
+      },
+    }));
+  }
+
+  async getByEventId(eventId: string) {
+    const event = await prisma.event.findUnique({ where: { id: eventId } });
+    if (!event) throw new Error("Event not found");
+
+    const registrations = await prisma.eventRegistration.findMany({
+      where: { eventId },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const totalGuests = registrations.reduce((sum, r) => sum + r.guests, 0);
+
+    return {
+      event: {
+        id: event.id,
+        title: event.title,
+        eventDate: event.eventDate.toISOString(),
+        requiresRegistration: event.requiresRegistration,
+      },
+      registrationCount: registrations.length,
+      totalGuests,
+      registrations: registrations.map((r) => ({
+        id: r.id,
+        name: r.name,
+        email: r.email,
+        guests: r.guests,
+        notes: r.notes,
+        createdAt: r.createdAt.toISOString(),
+      })),
+    };
+  }
+
+  async getRegistrationCounts() {
+    const events = await prisma.event.findMany({
+      where: { eventDate: { gte: new Date() } },
+      include: {
+        _count: { select: { registrations: true } },
+        registrations: { select: { guests: true } },
+      },
+      orderBy: { eventDate: "asc" },
+    });
+
+    return events.map((e) => ({
+      eventId: e.id,
+      title: e.title,
+      registrationCount: e._count.registrations,
+      totalGuests: e.registrations.reduce((sum, r) => sum + r.guests, 0),
+    }));
+  }
+
+  async delete(id: string) {
+    const registration = await prisma.eventRegistration.findUnique({ where: { id } });
+    if (!registration) throw new Error("Registration not found");
+    return prisma.eventRegistration.delete({ where: { id } });
+  }
+}
+
 export class DonationService {
-  async create(amount: number, paymentMethod: string, memberId?: string) {
+  async create(amount: number, paymentMethod: string, userId?: string) {
+    // Resolve userId -> memberId
+    let memberId: string | undefined;
+    if (userId) {
+      const member = await prisma.member.findUnique({ where: { userId } });
+      if (member) memberId = member.id;
+    }
     return prisma.donation.create({
       data: { amount, paymentMethod, memberId },
     });
   }
 
   async getAll() {
-    return prisma.donation.findMany({ orderBy: { date: "desc" } });
+    return prisma.donation.findMany({
+      orderBy: { date: "desc" },
+      include: { member: { include: { user: true } } },
+    });
+  }
+
+  async getByUserId(userId: string) {
+    const member = await prisma.member.findUnique({ where: { userId } });
+    if (!member) return [];
+    return prisma.donation.findMany({
+      where: { memberId: member.id },
+      orderBy: { date: "desc" },
+    });
   }
 }
 
@@ -206,11 +434,14 @@ export class ContactService {
 
 export class AdminService {
   async getStats() {
-    const [members, sermons, events, donations] = await Promise.all([
+    const [members, sermons, events, donations, eventRegistrations] = await Promise.all([
       prisma.member.count(),
       prisma.sermon.count(),
       prisma.event.count({ where: { eventDate: { gte: new Date() } } }),
       prisma.donation.aggregate({ _sum: { amount: true } }),
+      prisma.eventRegistration.count({
+        where: { event: { eventDate: { gte: new Date() } } },
+      }),
     ]);
 
     return {
@@ -218,7 +449,97 @@ export class AdminService {
       sermons,
       events,
       donations: donations._sum.amount || 0,
+      eventRegistrations,
     };
+  }
+
+  async getActivity() {
+    const [recentDonations, recentMembers, recentSermons, recentPrayers, recentTestimonies, recentRegistrations] =
+      await Promise.all([
+        prisma.donation.findMany({
+          take: 5,
+          orderBy: { date: "desc" },
+          include: { member: { include: { user: true } } },
+        }),
+        prisma.user.findMany({
+          take: 5,
+          orderBy: { createdAt: "desc" },
+          select: { id: true, name: true, email: true, role: true, createdAt: true },
+        }),
+        prisma.sermon.findMany({
+          take: 5,
+          orderBy: { date: "desc" },
+          select: { id: true, title: true, speaker: true, date: true },
+        }),
+        prisma.prayerRequest.findMany({
+          take: 5,
+          orderBy: { createdAt: "desc" },
+          select: { id: true, memberName: true, createdAt: true },
+        }),
+        prisma.testimony.findMany({
+          take: 5,
+          orderBy: { createdAt: "desc" },
+          select: { id: true, memberName: true, approved: true, createdAt: true },
+        }),
+        prisma.eventRegistration.findMany({
+          take: 5,
+          orderBy: { createdAt: "desc" },
+          include: { event: { select: { title: true } } },
+        }),
+      ]);
+
+    // Merge into a unified activity feed sorted by time
+    const feed: Array<{ type: string; label: string; time: string }> = [];
+
+    for (const d of recentDonations) {
+      feed.push({
+        type: "donation",
+        label: `Donation received: $${d.amount.toFixed(2)} via ${d.paymentMethod}${
+          d.member?.user?.name ? " from " + d.member.user.name : ""
+        }`,
+        time: d.date.toISOString(),
+      });
+    }
+    for (const m of recentMembers) {
+      feed.push({
+        type: "member",
+        label: `New member registered: ${m.name}`,
+        time: m.createdAt.toISOString(),
+      });
+    }
+    for (const s of recentSermons) {
+      feed.push({
+        type: "sermon",
+        label: `Sermon uploaded: ${s.title} by ${s.speaker}`,
+        time: s.date.toISOString(),
+      });
+    }
+    for (const p of recentPrayers) {
+      feed.push({
+        type: "prayer",
+        label: `Prayer request from ${p.memberName}`,
+        time: p.createdAt.toISOString(),
+      });
+    }
+    for (const t of recentTestimonies) {
+      feed.push({
+        type: "testimony",
+        label: `Testimony shared by ${t.memberName}${t.approved ? " ✓ approved" : " (pending)"}`,
+        time: t.createdAt.toISOString(),
+      });
+    }
+    for (const r of recentRegistrations) {
+      feed.push({
+        type: "event",
+        label: `${r.name} registered for ${r.event.title}`,
+        time: r.createdAt.toISOString(),
+      });
+    }
+
+    // Sort descending and return top 10
+    return feed
+      .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
+      .slice(0, 10);
   }
 }
 
@@ -275,3 +596,36 @@ export class TestimonyService {
     return prisma.testimony.delete({ where: { id } });
   }
 }
+
+export class MinistryService {
+  async getAll() {
+    return prisma.ministry.findMany({ orderBy: { name: "asc" } });
+  }
+
+  async getById(id: string) {
+    const ministry = await prisma.ministry.findUnique({ where: { id } });
+    if (!ministry) throw new Error("Ministry not found");
+    return ministry;
+  }
+
+  async create(data: { name: string; description: string; leader: string; image?: string }) {
+    return prisma.ministry.create({ data });
+  }
+
+  async update(id: string, data: { name?: string; description?: string; leader?: string; image?: string }) {
+    const ministry = await prisma.ministry.findUnique({ where: { id } });
+    if (!ministry) throw new Error("Ministry not found");
+
+    return prisma.ministry.update({
+      where: { id },
+      data,
+    });
+  }
+
+  async delete(id: string) {
+    const ministry = await prisma.ministry.findUnique({ where: { id } });
+    if (!ministry) throw new Error("Ministry not found");
+    return prisma.ministry.delete({ where: { id } });
+  }
+}
+

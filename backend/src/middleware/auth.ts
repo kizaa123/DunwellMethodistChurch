@@ -26,6 +26,24 @@ export function authenticate(req: AuthRequest, res: Response, next: NextFunction
   }
 }
 
+export function optionalAuthenticate(req: AuthRequest, _res: Response, next: NextFunction) {
+  const header = req.headers.authorization;
+  if (header?.startsWith("Bearer ")) {
+    try {
+      const token = header.split(" ")[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+        id: string;
+        email: string;
+        role: Role;
+      };
+      req.user = decoded;
+    } catch {
+      // ignore invalid token — treat as unauthenticated
+    }
+  }
+  next();
+}
+
 export function authorize(...roles: Role[]) {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user || !roles.includes(req.user.role)) {

@@ -41,35 +41,6 @@ export default function EventsPage() {
         subtitle="Stay connected with upcoming activities and fellowship opportunities"
       />
 
-      {/* ── LIVE NOW BANNER ── */}
-      {!loading && liveEvents.length > 0 && (
-        <div
-          className="sticky top-16 z-40 w-full"
-          style={{ background: "hsl(0,72%,42%)" }}
-        >
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <span className="relative flex h-3 w-3 shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-60" />
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-white" />
-              </span>
-              <span className="text-white font-bold text-sm">
-                🔴 HAPPENING NOW — {liveEvents[0].title}
-              </span>
-              <span className="text-white/70 text-xs hidden sm:inline">
-                @ {liveEvents[0].location}
-              </span>
-            </div>
-            <Link
-              href={`/events/${liveEvents[0].id}`}
-              className="shrink-0 px-4 py-1.5 rounded-full bg-white text-red-700 font-bold text-xs tracking-wide uppercase hover:bg-red-50 transition-colors"
-            >
-              View Details →
-            </Link>
-          </div>
-        </div>
-      )}
-
       {/* ── TODAY banner (no live window) ── */}
       {!loading && liveEvents.length === 0 && todayEvents.length > 0 && (
         <div

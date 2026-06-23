@@ -27,13 +27,14 @@ model User {
 }
 
 model Member {
-  id         String  @id @default(cuid())
-  userId     String  @unique @map("user_id")
-  phone      String?
-  address    String?
-  department String?
-  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  donations  Donation[]
+  id                 String              @id @default(cuid())
+  userId             String              @unique @map("user_id")
+  phone              String?
+  address            String?
+  department         String?
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  donations          Donation[]
+  eventRegistrations EventRegistration[]
 
   @@map("members")
 }
@@ -54,15 +55,33 @@ model Sermon {
 }
 
 model Event {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  location    String
-  eventDate   DateTime @map("event_date")
-  image       String?
-  liveUrl     String?  @map("live_url")
+  id                   String              @id @default(cuid())
+  title                String
+  description          String
+  location             String
+  eventDate            DateTime            @map("event_date")
+  image                String?
+  liveUrl              String?             @map("live_url")
+  requiresRegistration Boolean             @default(false) @map("requires_registration")
+  registrations        EventRegistration[]
 
   @@map("events")
+}
+
+model EventRegistration {
+  id        String   @id @default(cuid())
+  eventId   String   @map("event_id")
+  memberId  String?  @map("member_id")
+  name      String
+  email     String
+  guests    Int      @default(1)
+  notes     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  member    Member?  @relation(fields: [memberId], references: [id])
+
+  @@unique([eventId, email])
+  @@map("event_registrations")
 }
 
 model Donation {
@@ -126,3 +145,13 @@ model Testimony {
   @@map("testimonies")
 }
 
+model Ministry {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  leader      String
+  image       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("ministries")
+}

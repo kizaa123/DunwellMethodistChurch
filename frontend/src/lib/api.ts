@@ -47,6 +47,31 @@ export const api = {
   getEvents: () => fetchApi<import("@/types").Event[]>("/events"),
   getEvent: (id: string) => fetchApi<import("@/types").Event>(`/events/${id}`),
 
+  registerForEvent: (
+    eventId: string,
+    data: { name: string; email: string; guests?: number; notes?: string }
+  ) =>
+    fetchApi<import("@/types").EventRegistration>(`/events/${eventId}/register`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  cancelEventRegistration: (eventId: string, email?: string) =>
+    fetchApi<{ message: string }>(`/events/${eventId}/register`, {
+      method: "DELETE",
+      body: JSON.stringify(email ? { email } : {}),
+    }),
+
+  getMyEventRegistration: (eventId: string, email?: string) => {
+    const query = email ? `?email=${encodeURIComponent(email)}` : "";
+    return fetchApi<import("@/types").EventRegistration | null>(
+      `/events/${eventId}/my-registration${query}`
+    );
+  },
+
+  getMyEventRegistrations: () =>
+    fetchApi<import("@/types").EventRegistration[]>("/members/me/event-registrations"),
+
   // Donations
   createDonation: (data: { amount: number; paymentMethod: string }) =>
     fetchApi<import("@/types").Donation>("/donations", {
@@ -65,6 +90,10 @@ export const api = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+
+  // Ministries
+  getMinistries: () => fetchApi<import("@/types").Ministry[]>("/ministries"),
+  getMinistry: (id: string) => fetchApi<import("@/types").Ministry>(`/ministries/${id}`),
 
   // Announcements
   getAnnouncements: () =>
@@ -88,6 +117,12 @@ export const api = {
 
   getTestimonies: () => fetchApi<any[]>("/testimonies"),
 
+  // Member self-service
+  getMyDonations: () =>
+    fetchApi<Array<{ id: string; amount: number; paymentMethod: string; date: string }>>(
+      "/members/me/donations"
+    ),
+
   // Admin
   admin: {
     getStats: () =>
@@ -96,7 +131,11 @@ export const api = {
         sermons: number;
         events: number;
         donations: number;
+        eventRegistrations: number;
       }>("/admin/stats"),
+
+    getActivity: () =>
+      fetchApi<Array<{ type: string; label: string; time: string }>>("/admin/activity"),
 
     uploadFile: (base64Data: string, filename: string) =>
       fetchApi<{ url: string }>("/upload", {
@@ -153,6 +192,24 @@ export const api = {
       fetchApi<{ message: string }>(`/admin/sermons/${id}`, { method: "DELETE" }),
     deleteEvent: (id: string) =>
       fetchApi<{ message: string }>(`/admin/events/${id}`, { method: "DELETE" }),
+
+    getEventRegistrations: (eventId: string) =>
+      fetchApi<{
+        event: { id: string; title: string; eventDate: string; requiresRegistration: boolean };
+        registrationCount: number;
+        totalGuests: number;
+        registrations: Array<{
+          id: string;
+          name: string;
+          email: string;
+          guests: number;
+          notes?: string | null;
+          createdAt: string;
+        }>;
+      }>(`/admin/events/${eventId}/registrations`),
+
+    deleteEventRegistration: (id: string) =>
+      fetchApi<{ message: string }>(`/admin/event-registrations/${id}`, { method: "DELETE" }),
     deleteAnnouncement: (id: string) =>
       fetchApi<{ message: string }>(`/admin/announcements/${id}`, { method: "DELETE" }),
     deleteGalleryItem: (id: string) =>
@@ -166,8 +223,22 @@ export const api = {
       fetchApi<{ message: string }>(`/admin/prayer-requests/${id}`, { method: "DELETE" }),
     deleteTestimony: (id: string) =>
       fetchApi<{ message: string }>(`/admin/testimonies/${id}`, { method: "DELETE" }),
+
+    createMinistry: (data: Partial<import("@/types").Ministry>) =>
+      fetchApi<import("@/types").Ministry>("/admin/ministries", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    updateMinistry: (id: string, data: Partial<import("@/types").Ministry>) =>
+      fetchApi<import("@/types").Ministry>(`/admin/ministries/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }),
+    deleteMinistry: (id: string) =>
+      fetchApi<{ message: string }>(`/admin/ministries/${id}`, { method: "DELETE" }),
   },
 };
+
 
 export function parseLocalDate(d: string | Date): Date {
   if (!d) return new Date();

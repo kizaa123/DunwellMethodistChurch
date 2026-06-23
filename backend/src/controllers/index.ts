@@ -12,11 +12,14 @@ import {
   GalleryService,
   PrayerRequestService,
   TestimonyService,
+  MinistryService,
+  EventRegistrationService,
 } from "../services";
 
 const authService = new AuthService();
 const sermonService = new SermonService();
 const eventService = new EventService();
+const eventRegistrationService = new EventRegistrationService();
 const donationService = new DonationService();
 const announcementService = new AnnouncementService();
 const memberService = new MemberService();
@@ -25,6 +28,7 @@ const adminService = new AdminService();
 const galleryService = new GalleryService();
 const prayerRequestService = new PrayerRequestService();
 const testimonyService = new TestimonyService();
+const ministryService = new MinistryService();
 
 export class AuthController {
   async register(req: AuthRequest, res: Response) {
@@ -132,9 +136,94 @@ export class EventController {
   }
 }
 
+export class EventRegistrationController {
+  async register(req: AuthRequest, res: Response) {
+    try {
+      const eventId = req.params.id as string;
+      const { name, email, guests, notes } = req.body;
+      if (!name?.trim() || !email?.trim()) {
+        res.status(400).json({ message: "Name and email are required" });
+        return;
+      }
+      const result = await eventRegistrationService.register(
+        eventId,
+        { name, email, guests, notes },
+        req.user?.id
+      );
+      res.status(201).json(result);
+    } catch (err) {
+      res.status(400).json({ message: err instanceof Error ? err.message : "Registration failed" });
+    }
+  }
+
+  async cancel(req: AuthRequest, res: Response) {
+    try {
+      const eventId = req.params.id as string;
+      const email = (req.body.email as string) || req.user?.email;
+      if (!email) {
+        res.status(400).json({ message: "Email is required" });
+        return;
+      }
+      const result = await eventRegistrationService.cancel(eventId, email, req.user?.id);
+      res.json(result);
+    } catch (err) {
+      res.status(400).json({ message: err instanceof Error ? err.message : "Cancellation failed" });
+    }
+  }
+
+  async getMyRegistration(req: AuthRequest, res: Response) {
+    try {
+      const eventId = req.params.id as string;
+      const email = (req.query.email as string) || req.user?.email;
+      if (!email) {
+        res.status(400).json({ message: "Email is required" });
+        return;
+      }
+      const registration = await eventRegistrationService.getMyRegistration(eventId, email);
+      res.json(registration);
+    } catch (err) {
+      res.status(400).json({ message: err instanceof Error ? err.message : "Failed to load registration" });
+    }
+  }
+
+  async getMyRegistrations(req: AuthRequest, res: Response) {
+    try {
+      if (!req.user?.id) {
+        res.status(401).json({ message: "Not authenticated" });
+        return;
+      }
+      const registrations = await eventRegistrationService.getByUserId(req.user.id);
+      res.json(registrations);
+    } catch (err) {
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to load registrations" });
+    }
+  }
+
+  async getByEvent(req: AuthRequest, res: Response) {
+    try {
+      const eventId = req.params.id as string;
+      const data = await eventRegistrationService.getByEventId(eventId);
+      res.json(data);
+    } catch (err) {
+      res.status(404).json({ message: err instanceof Error ? err.message : "Event not found" });
+    }
+  }
+
+  async delete(req: AuthRequest, res: Response) {
+    try {
+      const id = req.params.id as string;
+      await eventRegistrationService.delete(id);
+      res.json({ message: "Registration removed" });
+    } catch (err) {
+      res.status(404).json({ message: err instanceof Error ? err.message : "Deletion failed" });
+    }
+  }
+}
+
 export class DonationController {
   async create(req: AuthRequest, res: Response) {
     const { amount, paymentMethod } = req.body;
+    // Pass userId so service can resolve memberId
     const donation = await donationService.create(amount, paymentMethod, req.user?.id);
     res.status(201).json(donation);
   }
@@ -142,6 +231,19 @@ export class DonationController {
   async getAll(_req: AuthRequest, res: Response) {
     const donations = await donationService.getAll();
     res.json(donations);
+  }
+
+  async getMyDonations(req: AuthRequest, res: Response) {
+    try {
+      if (!req.user?.id) {
+        res.status(401).json({ message: "Not authenticated" });
+        return;
+      }
+      const donations = await donationService.getByUserId(req.user.id);
+      res.json(donations);
+    } catch (err) {
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to load donations" });
+    }
   }
 }
 
@@ -197,6 +299,15 @@ export class AdminController {
   async getStats(_req: AuthRequest, res: Response) {
     const stats = await adminService.getStats();
     res.json(stats);
+  }
+
+  async getActivity(_req: AuthRequest, res: Response) {
+    try {
+      const feed = await adminService.getActivity();
+      res.json(feed);
+    } catch (err) {
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to load activity" });
+    }
   }
 }
 
@@ -297,3 +408,50 @@ export class TestimonyController {
     }
   }
 }
+
+export class MinistryController {
+  async getAll(_req: AuthRequest, res: Response) {
+    const ministries = await ministryService.getAll();
+    res.json(ministries);
+  }
+
+  async getById(req: AuthRequest, res: Response) {
+    try {
+      const id = req.params.id as string;
+      const ministry = await ministryService.getById(id);
+      res.json(ministry);
+    } catch {
+      res.status(404).json({ message: "Ministry not found" });
+    }
+  }
+
+  async create(req: AuthRequest, res: Response) {
+    try {
+      const ministry = await ministryService.create(req.body);
+      res.status(201).json(ministry);
+    } catch (err) {
+      res.status(400).json({ message: err instanceof Error ? err.message : "Creation failed" });
+    }
+  }
+
+  async update(req: AuthRequest, res: Response) {
+    try {
+      const id = req.params.id as string;
+      const ministry = await ministryService.update(id, req.body);
+      res.json(ministry);
+    } catch (err) {
+      res.status(404).json({ message: err instanceof Error ? err.message : "Update failed" });
+    }
+  }
+
+  async delete(req: AuthRequest, res: Response) {
+    try {
+      const id = req.params.id as string;
+      await ministryService.delete(id);
+      res.json({ message: "Ministry deleted successfully" });
+    } catch (err) {
+      res.status(404).json({ message: err instanceof Error ? err.message : "Deletion failed" });
+    }
+  }
+}
+

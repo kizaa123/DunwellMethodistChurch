@@ -13,6 +13,7 @@ export default function AdminSermonsPage() {
     videoUrl: "",
     date: "",
     thumbnail: "",
+    isLive: false,
   });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -68,7 +69,7 @@ export default function AdminSermonsPage() {
         setSermons((prev) => [newSermon, ...prev]);
       }
       setStatus("success");
-      setForm({ title: "", speaker: "", description: "", videoUrl: "", date: "", thumbnail: "" });
+      setForm({ title: "", speaker: "", description: "", videoUrl: "", date: "", thumbnail: "", isLive: false });
       setImagePreview("");
       setEditingId(null);
     } catch (err) {
@@ -87,6 +88,7 @@ export default function AdminSermonsPage() {
       videoUrl: s.videoUrl || "",
       date: dateStr,
       thumbnail: s.thumbnail || "",
+      isLive: s.isLive ?? false,
     });
     setImagePreview(s.thumbnail || "");
     setStatus("idle");
@@ -95,7 +97,7 @@ export default function AdminSermonsPage() {
 
   function handleCancelEdit() {
     setEditingId(null);
-    setForm({ title: "", speaker: "", description: "", videoUrl: "", date: "", thumbnail: "" });
+    setForm({ title: "", speaker: "", description: "", videoUrl: "", date: "", thumbnail: "", isLive: false });
     setImagePreview("");
     setStatus("idle");
   }
@@ -144,7 +146,7 @@ export default function AdminSermonsPage() {
                 <input
                   type={field.type}
                   required={field.key !== "videoUrl"}
-                  value={form[field.key as keyof typeof form]}
+                  value={form[field.key as keyof typeof form] as string}
                   onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
                   className="w-full px-4 py-2 rounded-lg border border-stone-300 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]/30 focus:border-[#1e3a5f] text-sm"
                 />
@@ -165,6 +167,29 @@ export default function AdminSermonsPage() {
                   <img src={imagePreview} alt="Sermon Thumbnail Preview" className="w-full h-full object-cover" />
                 </div>
               )}
+            </div>
+
+            {/* isLive toggle */}
+            <div className="flex items-center justify-between p-3 rounded-lg border border-stone-200 bg-stone-50">
+              <div>
+                <p className="text-xs font-semibold text-stone-700">🔴 Mark as Live Now</p>
+                <p className="text-[10px] text-stone-500 mt-0.5">Shows live badge and enables the Live Stream page</p>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={form.isLive}
+                onClick={() => setForm((prev) => ({ ...prev, isLive: !prev.isLive }))}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
+                  form.isLive ? "bg-red-600" : "bg-stone-200"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                    form.isLive ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
             </div>
 
             <div>
@@ -214,15 +239,28 @@ export default function AdminSermonsPage() {
                   }`}
                 >
                   <div className="flex gap-3 items-center min-w-0">
-                    <div className="w-16 aspect-video rounded overflow-hidden shrink-0 border border-stone-200 bg-stone-100 flex items-center justify-center">
+                    <div className="w-16 aspect-video rounded overflow-hidden shrink-0 border border-stone-200 bg-stone-100 flex items-center justify-center relative">
                       {s.thumbnail ? (
                         <img src={s.thumbnail} alt={s.title} className="w-full h-full object-cover" />
                       ) : (
                         <span className="text-[10px] text-stone-400">No Image</span>
                       )}
+                      {s.isLive && (
+                        <span className="absolute top-0.5 left-0.5 flex items-center gap-0.5 bg-red-600 text-white text-[8px] font-bold px-1 py-0.5 rounded">
+                          <span className="h-1 w-1 rounded-full bg-white animate-ping inline-block" />
+                          LIVE
+                        </span>
+                      )}
                     </div>
                     <div className="min-w-0">
-                      <p className="font-semibold text-sm text-[#1e3a5f] truncate">{s.title}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-sm text-[#1e3a5f] truncate">{s.title}</p>
+                        {s.isLive && (
+                          <span className="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200">
+                            Live
+                          </span>
+                        )}
+                      </div>
                       <p className="text-xs text-stone-500">
                         by {s.speaker} · {new Date(s.date).toLocaleDateString()}
                       </p>

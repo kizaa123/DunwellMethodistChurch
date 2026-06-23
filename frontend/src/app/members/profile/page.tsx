@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
-import { User, Announcement } from "@/types";
+import { User, Announcement, EventRegistration } from "@/types";
 import { api } from "@/lib/api";
 import { ministries } from "@/lib/data";
 
@@ -28,12 +28,18 @@ export default function MemberProfilePage() {
   const [testimonyStatus, setTestimonyStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   // Tab State
-  const [activeTab, setActiveTab] = useState<"overview" | "giving" | "interact">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "giving" | "interact" | "history">("overview");
 
   // Giving Form State
   const [givingAmount, setGivingAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("Credit Card");
   const [givingStatus, setGivingStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  // Giving History State
+  const [donations, setDonations] = useState<Array<{ id: string; amount: number; paymentMethod: string; date: string }>>([]);
+  const [loadingDonations, setLoadingDonations] = useState(false);
+  const [eventRegistrations, setEventRegistrations] = useState<EventRegistration[]>([]);
+  const [loadingEvents, setLoadingEvents] = useState(true);
 
   function handleTestimonyImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -97,6 +103,18 @@ export default function MemberProfilePage() {
       .then((data) => setAnnouncements(data))
       .catch(console.error)
       .finally(() => setLoadingAnn(false));
+
+    // Fetch giving history
+    setLoadingDonations(true);
+    api.getMyDonations()
+      .then(setDonations)
+      .catch(console.error)
+      .finally(() => setLoadingDonations(false));
+
+    api.getMyEventRegistrations()
+      .then(setEventRegistrations)
+      .catch(console.error)
+      .finally(() => setLoadingEvents(false));
   }, [router]);
 
   function handleLogout() {
@@ -140,6 +158,11 @@ export default function MemberProfilePage() {
       setGivingStatus("success");
       setGivingAmount("");
       setTimeout(() => setGivingStatus("idle"), 4000);
+      
+      // Reload giving history
+      api.getMyDonations()
+        .then(setDonations)
+        .catch(console.error);
     } catch (err) {
       console.error(err);
       setGivingStatus("error");
@@ -203,9 +226,10 @@ export default function MemberProfilePage() {
             {/* Navigation Tabs */}
             <div className="flex flex-wrap gap-2 mt-8 pt-6 border-t border-white/10">
               {[
-                { id: "overview", label: "🏠 Dashboard", desc: "Announcements & Groups" },
-                { id: "giving", label: "💝 Give Offering", desc: "Tithes & Support" },
-                { id: "interact", label: "📝 Prayer & Testimony", desc: "Share & Request" }
+                { id: "overview",  label: "🏠 Dashboard",          desc: "Announcements & Groups" },
+                { id: "giving",    label: "💝 Give Offering",       desc: "Tithes & Support" },
+                { id: "interact",  label: "📝 Prayer & Testimony",  desc: "Share & Request" },
+                { id: "history",   label: "📋 Giving History",      desc: "Past donations" },
               ].map((tab) => {
                 const active = activeTab === tab.id;
                 return (
@@ -279,8 +303,58 @@ export default function MemberProfilePage() {
                   </div>
                 </div>
 
-                {/* Right Column: Joined Ministries */}
+                {/* Right Column: Joined Ministries & Events */}
                 <div className="md:col-span-1 space-y-6">
+                  <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200">
+                    <div className="flex items-center gap-3 mb-4 pb-3 border-b border-stone-100">
+                      <div className="h-9 w-9 rounded-xl flex items-center justify-center bg-indigo-50 text-indigo-700 shrink-0 border border-indigo-100">
+                        📅
+                      </div>
+                      <div>
+                        <h3 className="font-serif text-base font-bold text-[#1e3a5f]">My Events</h3>
+                        <p className="text-xs text-stone-500">Events you&apos;ve registered for</p>
+                      </div>
+                    </div>
+
+                    {loadingEvents ? (
+                      <div className="text-center py-6 text-stone-400 text-xs">Loading...</div>
+                    ) : eventRegistrations.length === 0 ? (
+                      <div className="text-center py-8 text-stone-500">
+                        <p className="text-xs leading-relaxed">You haven&apos;t registered for any events yet.</p>
+                        <Link
+                          href="/events"
+                          className="inline-block mt-3 text-xs font-bold text-[#c9a227] hover:underline"
+                        >
+                          Browse Events →
+                        </Link>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {eventRegistrations.map((reg) => (
+                          <Link
+                            key={reg.id}
+                            href={reg.event ? `/events/${reg.event.id}` : "/events"}
+                            className="block p-4 rounded-2xl border border-stone-100 bg-stone-50/50 hover:bg-stone-50 transition-colors"
+                          >
+                            <h4 className="font-serif text-sm font-bold text-[#1e3a5f]">
+                              {reg.event?.title ?? "Event"}
+                            </h4>
+                            {reg.event && (
+                              <p className="text-[10px] text-stone-500 mt-1">
+                                {new Date(reg.event.eventDate).toLocaleDateString("en-GB", {
+                                  day: "numeric",
+                                  month: "long",
+                                  year: "numeric",
+                                })}{" "}
+                                · {reg.guests} {reg.guests === 1 ? "guest" : "guests"}
+                              </p>
+                            )}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
                   <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200">
                     <div className="flex items-center gap-3 mb-4 pb-3 border-b border-stone-100">
                       <div className="h-9 w-9 rounded-xl flex items-center justify-center bg-blue-50 text-[#1e3a5f] shrink-0 border border-blue-100">
@@ -548,6 +622,82 @@ export default function MemberProfilePage() {
                     </div>
                   </form>
                 </div>
+              </div>
+            )}
+
+            {/* 📋 GIVING HISTORY TAB */}
+            {activeTab === "history" && (
+              <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-stone-200">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-stone-100">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl flex items-center justify-center bg-amber-50 text-amber-600 text-xl border border-amber-100 shadow-inner">
+                      📋
+                    </div>
+                    <div>
+                      <h3 className="font-serif text-lg font-bold text-[#1e3a5f]">Giving History</h3>
+                      <p className="text-xs text-stone-500">Your faithful financial stewardship</p>
+                    </div>
+                  </div>
+                  <div className="bg-stone-50 border border-stone-200 px-4 py-2.5 rounded-2xl flex items-center gap-2 shrink-0">
+                    <span className="text-xs text-stone-500 font-semibold">Total Contributed:</span>
+                    <span className="font-serif text-base font-bold text-[#1e3a5f]">
+                      ${donations.reduce((acc, d) => acc + d.amount, 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                </div>
+
+                {loadingDonations ? (
+                  <div className="text-center py-10 text-stone-400 text-sm">Loading giving history...</div>
+                ) : donations.length === 0 ? (
+                  <div className="text-center py-12 text-stone-400 text-sm">
+                    <p className="text-3xl mb-3">💝</p>
+                    <p className="font-semibold text-stone-600">No giving history found.</p>
+                    <p className="text-stone-400 text-[11px] mt-1">Thank you for considering supporting the church.</p>
+                    <button
+                      onClick={() => setActiveTab("giving")}
+                      className="mt-4 px-4 py-2 rounded-xl bg-[#1e3a5f] hover:bg-[#2a5082] text-white text-xs font-semibold transition-colors cursor-pointer"
+                    >
+                      Make a Contribution
+                    </button>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-stone-200 text-stone-500 text-[10px] font-bold uppercase tracking-wider">
+                          <th className="py-3 px-4">Date</th>
+                          <th className="py-3 px-4">Donation ID</th>
+                          <th className="py-3 px-4">Method</th>
+                          <th className="py-3 px-4 text-right">Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-stone-100 text-xs text-stone-600">
+                        {donations.map((d) => (
+                          <tr key={d.id} className="hover:bg-stone-50/50 transition-colors">
+                            <td className="py-3 px-4 font-semibold">
+                              {new Date(d.date).toLocaleDateString("en-GB", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })}
+                            </td>
+                            <td className="py-3 px-4 font-mono text-[10px] text-stone-400">
+                              {d.id.substring(0, 8)}...
+                            </td>
+                            <td className="py-3 px-4">
+                              <span className="px-2.5 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-stone-600 text-[10px] font-medium">
+                                {d.paymentMethod}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4 text-right font-serif font-bold text-[#1e3a5f]">
+                              ${d.amount.toFixed(2)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             )}
           </div>
