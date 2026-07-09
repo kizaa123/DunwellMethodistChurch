@@ -295,23 +295,40 @@ export class MemberController {
 
 export class ContactController {
   async create(req: AuthRequest, res: Response) {
-    await contactService.create(req.body);
-    res.status(201).json({ message: "Message sent successfully" });
+    try {
+      await contactService.create(req.body);
+      res.status(201).json({ message: "Message sent successfully" });
+    } catch (err) {
+      res.status(400).json({ message: err instanceof Error ? err.message : "Failed to send message" });
+    }
   }
 
   async getAll(_req: AuthRequest, res: Response) {
-    const messages = await contactService.getAll();
-    res.json(messages);
+    try {
+      const messages = await contactService.getAll();
+      res.json(messages);
+    } catch (err) {
+      console.error("getAll contact messages:", err);
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to load contact messages" });
+    }
   }
 
   async markRead(req: AuthRequest, res: Response) {
-    await contactService.markRead(req.params.id);
-    res.json({ success: true });
+    try {
+      await contactService.markRead(req.params.id);
+      res.json({ success: true });
+    } catch (err) {
+      res.status(400).json({ message: err instanceof Error ? err.message : "Failed to mark as read" });
+    }
   }
 
   async delete(req: AuthRequest, res: Response) {
-    await contactService.delete(req.params.id);
-    res.json({ message: "Message deleted" });
+    try {
+      await contactService.delete(req.params.id);
+      res.json({ message: "Message deleted" });
+    } catch (err) {
+      res.status(400).json({ message: err instanceof Error ? err.message : "Failed to delete message" });
+    }
   }
 }
 

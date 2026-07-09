@@ -26,7 +26,10 @@ export default function AdminContactPage() {
         setMessages(data);
         setError("");
       })
-      .catch(() => setError("Failed to load contact messages."))
+      .catch((err: unknown) => {
+        const msg = err instanceof Error ? err.message : "Failed to load contact messages.";
+        setError(msg);
+      })
       .finally(() => setLoading(false));
   }
 
