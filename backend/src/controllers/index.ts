@@ -298,6 +298,21 @@ export class ContactController {
     await contactService.create(req.body);
     res.status(201).json({ message: "Message sent successfully" });
   }
+
+  async getAll(_req: AuthRequest, res: Response) {
+    const messages = await contactService.getAll();
+    res.json(messages);
+  }
+
+  async markRead(req: AuthRequest, res: Response) {
+    await contactService.markRead(req.params.id);
+    res.json({ success: true });
+  }
+
+  async delete(req: AuthRequest, res: Response) {
+    await contactService.delete(req.params.id);
+    res.json({ message: "Message deleted" });
+  }
 }
 
 export class AdminController {
@@ -312,6 +327,43 @@ export class AdminController {
       res.json(feed);
     } catch (err) {
       res.status(500).json({ message: err instanceof Error ? err.message : "Failed to load activity" });
+    }
+  }
+
+  async getNotifications(_req: AuthRequest, res: Response) {
+    try {
+      const items = await adminService.getNotifications();
+      res.json(items);
+    } catch (err) {
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to load notifications" });
+    }
+  }
+
+  async getNotificationSummary(_req: AuthRequest, res: Response) {
+    try {
+      const summary = await adminService.getNotificationSummary();
+      res.json(summary);
+    } catch (err) {
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to load summary" });
+    }
+  }
+
+  async markNotificationRead(req: AuthRequest, res: Response) {
+    try {
+      const { type, id } = req.params;
+      await adminService.markNotificationRead(type, id);
+      res.json({ success: true });
+    } catch (err) {
+      res.status(400).json({ message: err instanceof Error ? err.message : "Failed to mark read" });
+    }
+  }
+
+  async markAllNotificationsRead(_req: AuthRequest, res: Response) {
+    try {
+      await adminService.markAllNotificationsRead();
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ message: err instanceof Error ? err.message : "Failed to mark all read" });
     }
   }
 }

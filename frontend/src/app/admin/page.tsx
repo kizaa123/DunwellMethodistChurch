@@ -13,6 +13,7 @@ const ICON_MAP: Record<string, { emoji: string; bg: string; text: string }> = {
   prayer:   { emoji: "🙏", bg: "bg-green-50",  text: "text-green-600" },
   testimony:{ emoji: "✨", bg: "bg-rose-50",   text: "text-rose-600"  },
   event:    { emoji: "📅", bg: "bg-indigo-50", text: "text-indigo-600" },
+  contact:  { emoji: "✉️", bg: "bg-sky-50",   text: "text-sky-600"   },
 };
 
 function relativeTime(iso: string) {
@@ -68,7 +69,7 @@ export default function AdminDashboard() {
     },
     {
       label: "Total Donations",
-      value: `GHS ${Number(stats.donations).toFixed(2)}`,
+      value: `GHC ${Number(stats.donations).toFixed(2)}`,
       icon: "💰",
       bg: "bg-purple-500",
       href: "/admin/donations",

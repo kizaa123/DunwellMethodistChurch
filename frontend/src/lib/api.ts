@@ -137,6 +137,56 @@ export const api = {
     getActivity: () =>
       fetchApi<Array<{ type: string; label: string; time: string }>>("/admin/activity"),
 
+    getNotificationSummary: () =>
+      fetchApi<{
+        total: number;
+        contact: number;
+        prayer: number;
+        testimony: number;
+        donation: number;
+        event: number;
+      }>("/admin/notifications/summary"),
+
+    getNotifications: () =>
+      fetchApi<
+        Array<{
+          id: string;
+          type: string;
+          label: string;
+          detail?: string;
+          time: string;
+          href: string;
+          unread: boolean;
+        }>
+      >("/admin/notifications"),
+
+    markNotificationRead: (type: string, id: string) =>
+      fetchApi<{ success: boolean }>(`/admin/notifications/${type}/${id}/read`, {
+        method: "PATCH",
+      }),
+
+    markAllNotificationsRead: () =>
+      fetchApi<{ success: boolean }>("/admin/notifications/read-all", { method: "PATCH" }),
+
+    getContactMessages: () =>
+      fetchApi<
+        Array<{
+          id: string;
+          name: string;
+          email: string;
+          subject: string;
+          message: string;
+          createdAt: string;
+          readAt?: string | null;
+        }>
+      >("/admin/contact-messages"),
+
+    markContactRead: (id: string) =>
+      fetchApi<{ success: boolean }>(`/admin/contact-messages/${id}/read`, { method: "PATCH" }),
+
+    deleteContactMessage: (id: string) =>
+      fetchApi<{ message: string }>(`/admin/contact-messages/${id}`, { method: "DELETE" }),
+
     uploadFile: (base64Data: string, filename: string) =>
       fetchApi<{ url: string }>("/upload", {
         method: "POST",

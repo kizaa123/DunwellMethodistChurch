@@ -72,6 +72,13 @@ router.get("/members/me/event-registrations", authenticate, eventRegistration.ge
 // Admin routes (ADMIN & PASTOR)
 router.get("/admin/stats", authenticate, authorize("ADMIN", "PASTOR"), admin.getStats.bind(admin));
 router.get("/admin/activity", authenticate, authorize("ADMIN", "PASTOR"), admin.getActivity.bind(admin));
+router.get("/admin/notifications", authenticate, authorize("ADMIN", "PASTOR"), admin.getNotifications.bind(admin));
+router.get("/admin/notifications/summary", authenticate, authorize("ADMIN", "PASTOR"), admin.getNotificationSummary.bind(admin));
+router.patch("/admin/notifications/read-all", authenticate, authorize("ADMIN", "PASTOR"), admin.markAllNotificationsRead.bind(admin));
+router.patch("/admin/notifications/:type/:id/read", authenticate, authorize("ADMIN", "PASTOR"), admin.markNotificationRead.bind(admin));
+router.get("/admin/contact-messages", authenticate, authorize("ADMIN", "PASTOR"), contact.getAll.bind(contact));
+router.patch("/admin/contact-messages/:id/read", authenticate, authorize("ADMIN", "PASTOR"), contact.markRead.bind(contact));
+router.delete("/admin/contact-messages/:id", authenticate, authorize("ADMIN", "PASTOR"), contact.delete.bind(contact));
 router.get("/admin/members", authenticate, authorize("ADMIN", "PASTOR"), member.getAll.bind(member));
 router.get("/admin/donations", authenticate, authorize("ADMIN", "PASTOR"), donation.getAll.bind(donation));
 router.post("/admin/sermons", authenticate, authorize("ADMIN", "PASTOR"), sermon.create.bind(sermon));

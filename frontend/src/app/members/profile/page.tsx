@@ -429,10 +429,10 @@ export default function MemberProfilePage() {
                     {/* Amount field */}
                     <div>
                       <label className="block text-xs font-bold text-stone-600 mb-2 uppercase tracking-wider">
-                        Offering Amount (GHS)
+                        Offering Amount (GHC)
                       </label>
                       <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 font-bold text-sm">GHS</span>
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 font-bold text-sm">GHC</span>
                         <input
                           type="number"
                           required
@@ -454,7 +454,7 @@ export default function MemberProfilePage() {
                             onClick={() => setGivingAmount(amt.toString())}
                             className="flex-1 min-w-[calc(33%-0.5rem)] sm:flex-none sm:min-w-0 px-3 sm:px-4 py-2.5 sm:py-2 text-xs font-bold rounded-lg border border-stone-200 hover:border-[#1e3a5f] hover:bg-stone-50 active:bg-stone-100 text-stone-600 transition-colors cursor-pointer min-h-[44px] touch-manipulation"
                           >
-                            GHS {amt}
+                            GHC {amt}
                           </button>
                         ))}
                       </div>
@@ -641,7 +641,7 @@ export default function MemberProfilePage() {
                   <div className="bg-stone-50 border border-stone-200 px-4 py-2.5 rounded-2xl flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto">
                     <span className="text-xs text-stone-500 font-semibold">Total Contributed:</span>
                     <span className="font-serif text-base font-bold text-[#1e3a5f]">
-                      GHS {donations.reduce((acc, d) => acc + d.amount, 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      GHC {donations.reduce((acc, d) => acc + d.amount, 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </span>
                   </div>
                 </div>
@@ -667,7 +667,7 @@ export default function MemberProfilePage() {
                       {donations.map((d) => (
                         <div key={d.id} className="rounded-xl border border-stone-200 p-4 bg-stone-50/50">
                           <div className="flex items-center justify-between gap-3 mb-2">
-                            <p className="font-serif font-bold text-[#1e3a5f]">GHS {d.amount.toFixed(2)}</p>
+                            <p className="font-serif font-bold text-[#1e3a5f]">GHC {d.amount.toFixed(2)}</p>
                             <span className="px-2.5 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-stone-600 text-[10px] font-medium">
                               {d.paymentMethod}
                             </span>
@@ -714,7 +714,7 @@ export default function MemberProfilePage() {
                                 </span>
                               </td>
                               <td className="py-3 px-4 text-right font-serif font-bold text-[#1e3a5f]">
-                                GHS {d.amount.toFixed(2)}
+                                GHC {d.amount.toFixed(2)}
                               </td>
                             </tr>
                           ))}

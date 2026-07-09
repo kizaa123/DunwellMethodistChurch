@@ -69,28 +69,30 @@ model Event {
 }
 
 model EventRegistration {
-  id        String   @id @default(cuid())
-  eventId   String   @map("event_id")
-  memberId  String?  @map("member_id")
+  id        String    @id @default(cuid())
+  eventId   String    @map("event_id")
+  memberId  String?   @map("member_id")
   name      String
   email     String
-  guests    Int      @default(1)
+  guests    Int       @default(1)
   notes     String?
-  createdAt DateTime @default(now()) @map("created_at")
-  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  member    Member?  @relation(fields: [memberId], references: [id])
+  createdAt DateTime  @default(now()) @map("created_at")
+  readAt    DateTime? @map("read_at")
+  event     Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  member    Member?   @relation(fields: [memberId], references: [id])
 
   @@unique([eventId, email])
   @@map("event_registrations")
 }
 
 model Donation {
-  id            String   @id @default(cuid())
-  memberId      String?  @map("member_id")
+  id            String    @id @default(cuid())
+  memberId      String?   @map("member_id")
   amount        Float
-  paymentMethod String   @map("payment_method")
-  date          DateTime @default(now())
-  member        Member?  @relation(fields: [memberId], references: [id])
+  paymentMethod String    @map("payment_method")
+  date          DateTime  @default(now())
+  readAt        DateTime? @map("read_at")
+  member        Member?   @relation(fields: [memberId], references: [id])
 
   @@map("donations")
 }
@@ -105,12 +107,13 @@ model Announcement {
 }
 
 model ContactMessage {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
   email     String
   subject   String
   message   String
-  createdAt DateTime @default(now()) @map("created_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  readAt    DateTime? @map("read_at")
 
   @@map("contact_messages")
 }
@@ -125,22 +128,24 @@ model GalleryItem {
 }
 
 model PrayerRequest {
-  id         String   @id @default(cuid())
-  memberName String   @map("member_name")
+  id         String    @id @default(cuid())
+  memberName String    @map("member_name")
   email      String
   request    String
-  createdAt  DateTime @default(now()) @map("created_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  readAt     DateTime? @map("read_at")
 
   @@map("prayer_requests")
 }
 
 model Testimony {
-  id         String   @id @default(cuid())
-  memberName String   @map("member_name")
+  id         String    @id @default(cuid())
+  memberName String    @map("member_name")
   testimony  String
-  imageUrl   String?  @map("image_url")
-  approved   Boolean  @default(false)
-  createdAt  DateTime @default(now()) @map("created_at")
+  imageUrl   String?   @map("image_url")
+  approved   Boolean   @default(false)
+  readAt     DateTime? @map("read_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
 
   @@map("testimonies")
 }

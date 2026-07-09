@@ -430,6 +430,21 @@ export class ContactService {
   async create(data: { name: string; email: string; subject: string; message: string }) {
     return prisma.contactMessage.create({ data });
   }
+
+  async getAll() {
+    return prisma.contactMessage.findMany({ orderBy: { createdAt: "desc" } });
+  }
+
+  async markRead(id: string) {
+    return prisma.contactMessage.update({
+      where: { id },
+      data: { readAt: new Date() },
+    });
+  }
+
+  async delete(id: string) {
+    return prisma.contactMessage.delete({ where: { id } });
+  }
 }
 
 export class AdminService {
@@ -454,7 +469,7 @@ export class AdminService {
   }
 
   async getActivity() {
-    const [recentDonations, recentMembers, recentSermons, recentPrayers, recentTestimonies, recentRegistrations] =
+    const [recentDonations, recentMembers, recentSermons, recentPrayers, recentTestimonies, recentRegistrations, recentContacts] =
       await Promise.all([
         prisma.donation.findMany({
           take: 5,
@@ -486,6 +501,11 @@ export class AdminService {
           orderBy: { createdAt: "desc" },
           include: { event: { select: { title: true } } },
         }),
+        prisma.contactMessage.findMany({
+          take: 5,
+          orderBy: { createdAt: "desc" },
+          select: { id: true, name: true, subject: true, createdAt: true },
+        }),
       ]);
 
     // Merge into a unified activity feed sorted by time
@@ -494,7 +514,7 @@ export class AdminService {
     for (const d of recentDonations) {
       feed.push({
         type: "donation",
-        label: `Donation received: $${d.amount.toFixed(2)} via ${d.paymentMethod}${
+        label: `Donation received: GHC ${d.amount.toFixed(2)} via ${d.paymentMethod}${
           d.member?.user?.name ? " from " + d.member.user.name : ""
         }`,
         time: d.date.toISOString(),
@@ -535,11 +555,196 @@ export class AdminService {
         time: r.createdAt.toISOString(),
       });
     }
+    for (const c of recentContacts) {
+      feed.push({
+        type: "contact",
+        label: `Guest message from ${c.name}: ${c.subject}`,
+        time: c.createdAt.toISOString(),
+      });
+    }
 
     // Sort descending and return top 10
     return feed
       .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
       .slice(0, 10);
+  }
+
+  async getNotifications() {
+    const [
+      contacts,
+      prayers,
+      pendingTestimonies,
+      donations,
+      registrations,
+      recentMembers,
+    ] = await Promise.all([
+      prisma.contactMessage.findMany({
+        where: { readAt: null },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      }),
+      prisma.prayerRequest.findMany({
+        where: { readAt: null },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      }),
+      prisma.testimony.findMany({
+        where: { approved: false, readAt: null },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      }),
+      prisma.donation.findMany({
+        where: { readAt: null },
+        orderBy: { date: "desc" },
+        take: 10,
+        include: { member: { include: { user: true } } },
+      }),
+      prisma.eventRegistration.findMany({
+        where: { readAt: null },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+        include: { event: { select: { title: true } } },
+      }),
+      prisma.user.findMany({
+        where: {
+          createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+          role: "MEMBER",
+        },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        select: { id: true, name: true, createdAt: true },
+      }),
+    ]);
+
+    type NotificationItem = {
+      id: string;
+      type: string;
+      label: string;
+      detail?: string;
+      time: string;
+      href: string;
+      unread: boolean;
+    };
+
+    const items: NotificationItem[] = [];
+
+    for (const c of contacts) {
+      items.push({
+        id: c.id,
+        type: "contact",
+        label: `Guest message from ${c.name}`,
+        detail: c.subject,
+        time: c.createdAt.toISOString(),
+        href: "/admin/contact",
+        unread: true,
+      });
+    }
+    for (const p of prayers) {
+      items.push({
+        id: p.id,
+        type: "prayer",
+        label: `Prayer request from ${p.memberName}`,
+        detail: p.request.slice(0, 80) + (p.request.length > 80 ? "…" : ""),
+        time: p.createdAt.toISOString(),
+        href: "/admin/prayer-requests",
+        unread: true,
+      });
+    }
+    for (const t of pendingTestimonies) {
+      items.push({
+        id: t.id,
+        type: "testimony",
+        label: `Testimony pending approval — ${t.memberName}`,
+        detail: t.testimony.slice(0, 80) + (t.testimony.length > 80 ? "…" : ""),
+        time: t.createdAt.toISOString(),
+        href: "/admin/testimonies",
+        unread: true,
+      });
+    }
+    for (const d of donations) {
+      items.push({
+        id: d.id,
+        type: "donation",
+        label: `Donation: GHC ${d.amount.toFixed(2)}`,
+        detail: d.member?.user?.name ? `From ${d.member.user.name}` : `Via ${d.paymentMethod}`,
+        time: d.date.toISOString(),
+        href: "/admin/donations",
+        unread: true,
+      });
+    }
+    for (const r of registrations) {
+      items.push({
+        id: r.id,
+        type: "event",
+        label: `${r.name} registered for ${r.event.title}`,
+        detail: `${r.guests} guest${r.guests !== 1 ? "s" : ""}`,
+        time: r.createdAt.toISOString(),
+        href: "/admin/events",
+        unread: true,
+      });
+    }
+    for (const m of recentMembers) {
+      items.push({
+        id: m.id,
+        type: "member",
+        label: `New member: ${m.name}`,
+        time: m.createdAt.toISOString(),
+        href: "/admin/members",
+        unread: false,
+      });
+    }
+
+    return items
+      .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
+      .slice(0, 30);
+  }
+
+  async getNotificationSummary() {
+    const [contact, prayer, testimony, donation, event] = await Promise.all([
+      prisma.contactMessage.count({ where: { readAt: null } }),
+      prisma.prayerRequest.count({ where: { readAt: null } }),
+      prisma.testimony.count({ where: { approved: false, readAt: null } }),
+      prisma.donation.count({ where: { readAt: null } }),
+      prisma.eventRegistration.count({ where: { readAt: null } }),
+    ]);
+
+    const total = contact + prayer + testimony + donation + event;
+    return { total, contact, prayer, testimony, donation, event };
+  }
+
+  async markNotificationRead(type: string, id: string) {
+    const now = new Date();
+    switch (type) {
+      case "contact":
+        await prisma.contactMessage.update({ where: { id }, data: { readAt: now } });
+        break;
+      case "prayer":
+        await prisma.prayerRequest.update({ where: { id }, data: { readAt: now } });
+        break;
+      case "donation":
+        await prisma.donation.update({ where: { id }, data: { readAt: now } });
+        break;
+      case "event":
+        await prisma.eventRegistration.update({ where: { id }, data: { readAt: now } });
+        break;
+      case "testimony":
+        await prisma.testimony.update({ where: { id }, data: { readAt: now } });
+        break;
+      default:
+        throw new Error("Unknown notification type");
+    }
+    return { success: true };
+  }
+
+  async markAllNotificationsRead() {
+    const now = new Date();
+    await Promise.all([
+      prisma.contactMessage.updateMany({ where: { readAt: null }, data: { readAt: now } }),
+      prisma.prayerRequest.updateMany({ where: { readAt: null }, data: { readAt: now } }),
+      prisma.donation.updateMany({ where: { readAt: null }, data: { readAt: now } }),
+      prisma.eventRegistration.updateMany({ where: { readAt: null }, data: { readAt: now } }),
+    ]);
+    return { success: true };
   }
 }
 
@@ -588,7 +793,7 @@ export class TestimonyService {
   async approve(id: string) {
     return prisma.testimony.update({
       where: { id },
-      data: { approved: true },
+      data: { approved: true, readAt: new Date() },
     });
   }
 

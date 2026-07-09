@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import AdminNotificationBell from "@/components/AdminNotificationBell";
 
 const adminLinks = [
   { href: "/admin", label: "Dashboard", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
   { href: "/admin/members", label: "Members", icon: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" },
+  { href: "/admin/contact", label: "Guest Messages", icon: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" },
   { href: "/admin/sermons", label: "Sermons", icon: "M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" },
   { href: "/admin/events", label: "Events", icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" },
   { href: "/admin/ministries", label: "Ministries", icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" },
@@ -92,23 +94,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="bg-white border-b border-stone-200 px-4 h-20 flex items-center gap-4 lg:hidden">
-          <button onClick={() => setSidebarOpen(true)} className="p-2 rounded-md hover:bg-stone-100">
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-          <div className="flex items-center gap-2.5">
-            <img
-              src="/logo.png"
-              alt="Dunwell Methodist Church Logo"
-              className="h-12 w-12 object-contain"
-            />
-            <div>
-              <span className="font-semibold text-[#1e3a5f] block leading-tight text-sm">Admin Panel</span>
-              <span className="text-stone-400 block leading-tight text-[10px]">Dunwell Methodist</span>
+        <header className="bg-white border-b border-stone-200 px-4 h-16 sm:h-20 flex items-center justify-between gap-4 shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="p-2 rounded-md hover:bg-stone-100 lg:hidden shrink-0"
+              aria-label="Open menu"
+            >
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <div className="flex items-center gap-2.5 lg:hidden min-w-0">
+              <img src="/logo.png" alt="" className="h-10 w-10 object-contain shrink-0" />
+              <span className="font-semibold text-[#1e3a5f] text-sm truncate">Admin Panel</span>
             </div>
+            <p className="hidden lg:block text-sm font-medium text-stone-500 truncate">
+              Dunwell Methodist Church — Admin
+            </p>
           </div>
+          <AdminNotificationBell />
         </header>
         <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-x-hidden min-w-0">{children}</main>
       </div>

@@ -44,7 +44,7 @@ export default function DonationsPage() {
               </div>
               <h2 className="font-serif text-2xl font-bold text-[#1e3a5f] mb-2">Thank You!</h2>
               <p className="text-stone-600">
-                Your generous gift of ${finalAmount.toFixed(2)} helps us continue our ministry.
+                Your generous gift of GHC {finalAmount.toFixed(2)} helps us continue our ministry.
                 May God bless you abundantly.
               </p>
             </div>
@@ -67,7 +67,7 @@ export default function DonationsPage() {
                           : "bg-stone-100 text-stone-700 hover:bg-stone-200"
                       }`}
                     >
-                      ${preset}
+                      GHC {preset}
                     </button>
                   ))}
                 </div>
@@ -123,7 +123,7 @@ export default function DonationsPage() {
                 disabled={status === "loading" || !finalAmount}
                 className="w-full py-3 rounded-lg bg-[#c9a227] text-white font-medium hover:bg-[#b8911f] transition-colors disabled:opacity-60"
               >
-                {status === "loading" ? "Processing..." : `Give $${finalAmount || "0"}`}
+                {status === "loading" ? "Processing..." : `Give GHC ${finalAmount || "0"}`}
               </button>
 
               <p className="text-xs text-stone-400 text-center mt-4">
