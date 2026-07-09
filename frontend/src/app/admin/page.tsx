@@ -87,18 +87,18 @@ export default function AdminDashboard() {
 
   return (
     <div className="animate-fade-in">
-      <h1 className="font-serif text-2xl font-bold text-[#1e3a5f] mb-1">Dashboard</h1>
-      <p className="text-stone-500 mb-8 text-sm">
+      <h1 className="font-serif text-xl sm:text-2xl font-bold text-[#1e3a5f] mb-1">Dashboard</h1>
+      <p className="text-stone-500 mb-6 sm:mb-8 text-sm">
         Welcome to the Dunwell Methodist Church administration panel
       </p>
 
       {/* Stat Cards */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
         {statCards.map((card) => (
           <Link
             key={card.label}
             href={card.href}
-            className="bg-white rounded-xl p-6 shadow-sm border border-stone-200 hover:shadow-md hover:-translate-y-0.5 transition-all group block"
+            className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-stone-200 hover:shadow-md hover:-translate-y-0.5 transition-all group block"
           >
             <div className="flex items-center justify-between mb-3">
               <div className={`h-10 w-10 rounded-lg ${card.bg} flex items-center justify-center text-lg`}>
@@ -117,9 +117,9 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6">
         {/* Quick Actions */}
-        <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-sm border border-stone-200">
+        <div className="lg:col-span-2 bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-stone-200">
           <h2 className="font-semibold text-[#1e3a5f] mb-4 flex items-center gap-2">
             <span className="text-base">⚡</span> Quick Actions
           </h2>
@@ -141,8 +141,8 @@ export default function AdminDashboard() {
         </div>
 
         {/* Live Activity Feed */}
-        <div className="lg:col-span-3 bg-white rounded-xl p-6 shadow-sm border border-stone-200">
-          <div className="flex items-center justify-between mb-4">
+        <div className="lg:col-span-3 bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-stone-200">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
             <h2 className="font-semibold text-[#1e3a5f] flex items-center gap-2">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-60" />

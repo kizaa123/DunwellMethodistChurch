@@ -107,17 +107,15 @@ export default function AdminMinistriesPage() {
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="font-serif text-2xl font-bold text-[#1e3a5f] mb-2">Ministries Management</h1>
-          <p className="text-stone-500 text-xs">Create, edit, and delete church ministries.</p>
-        </div>
+    <div className="space-y-6 sm:space-y-8 animate-fade-in">
+      <div>
+        <h1 className="font-serif text-xl sm:text-2xl font-bold text-[#1e3a5f] mb-1 sm:mb-2">Ministries Management</h1>
+        <p className="text-stone-500 text-sm">Create, edit, and delete church ministries.</p>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8 items-start">
         {/* Form on left */}
-        <div className="lg:col-span-1 bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-6">
+        <div className="lg:col-span-1 bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-stone-200 shadow-sm space-y-6">
           <h2 className="font-serif text-base font-bold text-[#1e3a5f] pb-3 border-b border-stone-100">
             {editingId ? "Edit Ministry Details" : "Create New Ministry"}
           </h2>
@@ -206,7 +204,7 @@ export default function AdminMinistriesPage() {
               )}
             </div>
 
-            <div className="flex gap-2 pt-2">
+            <div className="flex flex-col sm:flex-row gap-2 pt-2">
               {editingId && (
                 <button
                   type="button"
@@ -228,7 +226,7 @@ export default function AdminMinistriesPage() {
         </div>
 
         {/* List on right */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-6">
+        <div className="lg:col-span-2 bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-stone-200 shadow-sm space-y-6">
           <h2 className="font-serif text-base font-bold text-[#1e3a5f] pb-3 border-b border-stone-100">
             Ministries List ({ministries.length})
           </h2>
@@ -236,7 +234,7 @@ export default function AdminMinistriesPage() {
           {ministries.length === 0 ? (
             <div className="text-center py-12 text-stone-400 text-xs">No ministries found. Add one on the left.</div>
           ) : (
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {ministries.map((m) => (
                 <div
                   key={m.id}

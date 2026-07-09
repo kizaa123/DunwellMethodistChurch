@@ -223,12 +223,12 @@ export default function AdminEventsPage() {
 
   return (
     <div>
-      <h1 className="font-serif text-2xl font-bold text-[#1e3a5f] mb-2">Events Management</h1>
-      <p className="text-stone-500 mb-8">Schedule new church events and manage registrations</p>
+      <h1 className="font-serif text-xl sm:text-2xl font-bold text-[#1e3a5f] mb-1 sm:mb-2">Events Management</h1>
+      <p className="text-stone-500 mb-6 sm:mb-8 text-sm">Schedule new church events and manage registrations</p>
 
-      <div className="grid lg:grid-cols-3 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8 items-start">
         {/* Form */}
-        <div className="lg:col-span-1 bg-white rounded-xl p-6 shadow-sm border border-stone-200">
+        <div className="lg:col-span-1 bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-stone-200">
           <h2 className="font-serif text-lg font-bold text-[#1e3a5f] mb-4">
             {editingId ? "Edit Event" : "Create New Event"}
           </h2>
@@ -303,7 +303,7 @@ export default function AdminEventsPage() {
               />
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <button
                 type="submit"
                 disabled={status === "loading" || uploadingImage}
@@ -325,37 +325,37 @@ export default function AdminEventsPage() {
         </div>
 
         {/* List */}
-        <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-sm border border-stone-200">
+        <div className="lg:col-span-2 bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-stone-200">
           <h2 className="font-serif text-lg font-bold text-[#1e3a5f] mb-4">Scheduled Events</h2>
           {events.length === 0 ? (
             <div className="text-center py-10 text-stone-500 text-sm">No events scheduled.</div>
           ) : (
-            <div className="divide-y divide-stone-100 max-h-[600px] overflow-y-auto pr-2">
+            <div className="divide-y divide-stone-100 max-h-[600px] overflow-y-auto pr-1 sm:pr-2">
               {events.map((ev) => (
                 <div
                   key={ev.id}
-                  className={`py-4 flex justify-between items-center gap-4 animate-fade-in ${
+                  className={`py-4 flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center animate-fade-in ${
                     editingId === ev.id ? "bg-stone-50 rounded-lg px-2 -mx-2" : ""
                   }`}
                 >
-                  <div className="flex gap-3 items-center min-w-0">
-                    <div className="w-16 aspect-video rounded overflow-hidden shrink-0 border border-stone-200 bg-stone-100 flex items-center justify-center">
+                  <div className="flex gap-3 items-start sm:items-center min-w-0 flex-1">
+                    <div className="w-20 sm:w-16 aspect-video rounded overflow-hidden shrink-0 border border-stone-200 bg-stone-100 flex items-center justify-center">
                       {ev.image ? (
                         <img src={ev.image} alt={ev.title} className="w-full h-full object-cover" />
                       ) : (
                         <span className="text-[10px] text-stone-400">No Image</span>
                       )}
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-semibold text-sm text-[#1e3a5f] truncate">{ev.title}</p>
+                        <p className="font-semibold text-sm text-[#1e3a5f] break-words">{ev.title}</p>
                         {ev.requiresRegistration && (
                           <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">
                             RSVP
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-stone-500">
+                      <p className="text-xs text-stone-500 mt-0.5">
                         {new Date(ev.eventDate).toLocaleDateString()} · {ev.location}
                       </p>
                       <p className="text-[10px] text-stone-400 mt-0.5">
@@ -365,22 +365,22 @@ export default function AdminEventsPage() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex gap-2 shrink-0 flex-wrap justify-end">
+                  <div className="grid grid-cols-3 sm:flex gap-2 shrink-0 w-full sm:w-auto">
                     <button
                       onClick={() => openRegistrations(ev.id)}
-                      className="px-3 py-1.5 rounded-lg border border-[#1e3a5f]/20 text-[#1e3a5f] hover:bg-[#1e3a5f]/5 text-xs font-semibold transition-colors cursor-pointer"
+                      className="px-2 sm:px-3 py-2 sm:py-1.5 rounded-lg border border-[#1e3a5f]/20 text-[#1e3a5f] hover:bg-[#1e3a5f]/5 text-xs font-semibold transition-colors cursor-pointer"
                     >
                       View ({ev.registrationCount ?? 0})
                     </button>
                     <button
                       onClick={() => handleEdit(ev)}
-                      className="px-3 py-1.5 rounded-lg border border-stone-200 text-stone-600 hover:bg-stone-50 text-xs font-semibold transition-colors cursor-pointer"
+                      className="px-2 sm:px-3 py-2 sm:py-1.5 rounded-lg border border-stone-200 text-stone-600 hover:bg-stone-50 text-xs font-semibold transition-colors cursor-pointer"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(ev.id)}
-                      className="px-3 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 text-xs font-semibold transition-colors cursor-pointer"
+                      className="px-2 sm:px-3 py-2 sm:py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 text-xs font-semibold transition-colors cursor-pointer"
                     >
                       Delete
                     </button>
@@ -394,36 +394,36 @@ export default function AdminEventsPage() {
 
       {/* Registrations Modal */}
       {viewingEventId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
-          <div className="bg-white rounded-2xl shadow-xl border border-stone-200 w-full max-w-3xl max-h-[85vh] flex flex-col">
-            <div className="p-6 border-b border-stone-100 flex items-start justify-between gap-4">
-              <div>
-                <h3 className="font-serif text-xl font-bold text-[#1e3a5f]">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40">
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl border border-stone-200 w-full sm:max-w-3xl max-h-[90vh] sm:max-h-[85vh] flex flex-col">
+            <div className="p-4 sm:p-6 border-b border-stone-100 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0">
+                <h3 className="font-serif text-lg sm:text-xl font-bold text-[#1e3a5f] break-words">
                   Registrations — {registrationMeta.title}
                 </h3>
                 <p className="text-sm text-stone-500 mt-1">
                   {registrationMeta.registrationCount} registrations · {registrationMeta.totalGuests} total guests
                 </p>
               </div>
-              <div className="flex gap-2 shrink-0">
+              <div className="flex gap-2 shrink-0 w-full sm:w-auto">
                 {registrations.length > 0 && (
                   <button
                     onClick={exportCsv}
-                    className="px-3 py-1.5 rounded-lg bg-[#1e3a5f] text-white text-xs font-semibold hover:bg-[#2a5082] transition-colors cursor-pointer"
+                    className="flex-1 sm:flex-none px-3 py-2 sm:py-1.5 rounded-lg bg-[#1e3a5f] text-white text-xs font-semibold hover:bg-[#2a5082] transition-colors cursor-pointer"
                   >
                     Export CSV
                   </button>
                 )}
                 <button
                   onClick={() => setViewingEventId(null)}
-                  className="px-3 py-1.5 rounded-lg border border-stone-200 text-stone-600 text-xs font-semibold hover:bg-stone-50 cursor-pointer"
+                  className="flex-1 sm:flex-none px-3 py-2 sm:py-1.5 rounded-lg border border-stone-200 text-stone-600 text-xs font-semibold hover:bg-stone-50 cursor-pointer"
                 >
                   Close
                 </button>
               </div>
             </div>
 
-            <div className="overflow-y-auto flex-1 p-6">
+            <div className="overflow-y-auto flex-1 p-4 sm:p-6">
               {loadingRegistrations ? (
                 <div className="flex justify-center py-16">
                   <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#1e3a5f]" />
@@ -433,47 +433,84 @@ export default function AdminEventsPage() {
                   No one has registered for this event yet.
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="text-left text-xs text-stone-500 border-b border-stone-100">
-                        <th className="pb-3 pr-4 font-semibold">Name</th>
-                        <th className="pb-3 pr-4 font-semibold">Email</th>
-                        <th className="pb-3 pr-4 font-semibold">Guests</th>
-                        <th className="pb-3 pr-4 font-semibold">Notes</th>
-                        <th className="pb-3 pr-4 font-semibold">Registered</th>
-                        <th className="pb-3 font-semibold"></th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-stone-50">
-                      {registrations.map((r) => (
-                        <tr key={r.id} className="text-stone-700">
-                          <td className="py-3 pr-4 font-medium">{r.name}</td>
-                          <td className="py-3 pr-4 text-stone-500">{r.email}</td>
-                          <td className="py-3 pr-4">{r.guests}</td>
-                          <td className="py-3 pr-4 text-xs text-stone-500 max-w-[140px] truncate">
-                            {r.notes || "—"}
-                          </td>
-                          <td className="py-3 pr-4 text-xs text-stone-400 whitespace-nowrap">
+                <>
+                  {/* Mobile card view */}
+                  <div className="space-y-3 md:hidden">
+                    {registrations.map((r) => (
+                      <div key={r.id} className="rounded-xl border border-stone-200 p-4 bg-stone-50/50">
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <p className="font-semibold text-sm text-[#1e3a5f]">{r.name}</p>
+                          <button
+                            onClick={() => handleRemoveRegistration(r.id)}
+                            className="text-red-600 hover:text-red-800 text-xs font-semibold cursor-pointer shrink-0"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                        <p className="text-xs text-stone-500 break-all">{r.email}</p>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-stone-600">
+                          <span><strong>Guests:</strong> {r.guests}</span>
+                          <span>
+                            <strong>Registered:</strong>{" "}
                             {new Date(r.createdAt).toLocaleDateString("en-GB", {
                               day: "numeric",
                               month: "short",
                               year: "numeric",
                             })}
-                          </td>
-                          <td className="py-3">
-                            <button
-                              onClick={() => handleRemoveRegistration(r.id)}
-                              className="text-red-600 hover:text-red-800 text-xs font-semibold cursor-pointer"
-                            >
-                              Remove
-                            </button>
-                          </td>
+                          </span>
+                        </div>
+                        {r.notes && (
+                          <p className="text-xs text-stone-500 mt-2 pt-2 border-t border-stone-200">
+                            <strong>Notes:</strong> {r.notes}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Desktop table */}
+                  <div className="hidden md:block overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="text-left text-xs text-stone-500 border-b border-stone-100">
+                          <th className="pb-3 pr-4 font-semibold">Name</th>
+                          <th className="pb-3 pr-4 font-semibold">Email</th>
+                          <th className="pb-3 pr-4 font-semibold">Guests</th>
+                          <th className="pb-3 pr-4 font-semibold">Notes</th>
+                          <th className="pb-3 pr-4 font-semibold">Registered</th>
+                          <th className="pb-3 font-semibold"></th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody className="divide-y divide-stone-50">
+                        {registrations.map((r) => (
+                          <tr key={r.id} className="text-stone-700">
+                            <td className="py-3 pr-4 font-medium">{r.name}</td>
+                            <td className="py-3 pr-4 text-stone-500">{r.email}</td>
+                            <td className="py-3 pr-4">{r.guests}</td>
+                            <td className="py-3 pr-4 text-xs text-stone-500 max-w-[140px] truncate">
+                              {r.notes || "—"}
+                            </td>
+                            <td className="py-3 pr-4 text-xs text-stone-400 whitespace-nowrap">
+                              {new Date(r.createdAt).toLocaleDateString("en-GB", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })}
+                            </td>
+                            <td className="py-3">
+                              <button
+                                onClick={() => handleRemoveRegistration(r.id)}
+                                className="text-red-600 hover:text-red-800 text-xs font-semibold cursor-pointer"
+                              >
+                                Remove
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               )}
             </div>
           </div>

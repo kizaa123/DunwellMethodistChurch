@@ -60,14 +60,14 @@ export default function AdminTestimoniesPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-[#1e3a5f] mb-1">Member Testimonies</h1>
-          <p className="text-xs text-stone-500">Manage and approve testimonies submitted by church members</p>
+          <h1 className="font-serif text-xl sm:text-2xl font-bold text-[#1e3a5f] mb-1">Member Testimonies</h1>
+          <p className="text-xs sm:text-sm text-stone-500">Manage and approve testimonies submitted by church members</p>
         </div>
         <button
           onClick={fetchTestimonies}
-          className="px-4 py-2 text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg transition-colors cursor-pointer"
+          className="w-full sm:w-auto px-4 py-2.5 sm:py-2 text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg transition-colors cursor-pointer"
         >
           🔄 Refresh List
         </button>
@@ -88,14 +88,14 @@ export default function AdminTestimoniesPage() {
           {testimonies.map((test) => (
             <div
               key={test.id}
-              className={`bg-white rounded-3xl shadow-sm border overflow-hidden flex flex-col sm:flex-row transition-all duration-200 ${
+              className={`bg-white rounded-2xl sm:rounded-3xl shadow-sm border overflow-hidden flex flex-col sm:flex-row transition-all duration-200 ${
                 test.approved
                   ? "border-emerald-100 hover:border-emerald-300 hover:shadow-md"
                   : "border-stone-200 hover:border-stone-300 hover:shadow-md"
               }`}
             >
               {/* Image side column */}
-              <div className="sm:w-44 h-48 sm:h-auto relative shrink-0 bg-stone-50 border-r border-stone-100 flex items-center justify-center">
+              <div className="w-full sm:w-44 h-40 sm:h-auto relative shrink-0 bg-stone-50 border-b sm:border-b-0 sm:border-r border-stone-100 flex items-center justify-center">
                 {test.imageUrl ? (
                   <img
                     src={test.imageUrl}
@@ -108,9 +108,9 @@ export default function AdminTestimoniesPage() {
               </div>
 
               {/* Content Column */}
-              <div className="p-6 flex-1 flex flex-col justify-between">
+              <div className="p-4 sm:p-6 flex-1 flex flex-col justify-between">
                 <div>
-                  <div className="flex flex-wrap items-center justify-between gap-2.5 mb-4">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between mb-4">
                     <div>
                       <h3 className="font-semibold text-base text-[#1e3a5f]">{test.memberName}</h3>
                       <p className="text-[10px] text-stone-400 mt-0.5">
@@ -123,7 +123,7 @@ export default function AdminTestimoniesPage() {
                         })}
                       </p>
                     </div>
-                    <div>
+                    <div className="self-start sm:self-auto">
                       {test.approved ? (
                         <span className="text-[9px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                           Approved &amp; Live
@@ -145,18 +145,18 @@ export default function AdminTestimoniesPage() {
                   </div>
                 </div>
 
-                <div className="flex gap-2 justify-end pt-3 border-t border-stone-100">
+                <div className="flex flex-col sm:flex-row gap-2 justify-stretch sm:justify-end pt-3 border-t border-stone-100">
                   {!test.approved && (
                     <button
                       onClick={() => handleApprove(test.id)}
-                      className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm"
+                      className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
                     >
                       ✓ Approve Testimony
                     </button>
                   )}
                   <button
                     onClick={() => handleDelete(test.id)}
-                    className="px-4 py-2 rounded-xl border border-red-200 text-red-600 text-xs font-semibold hover:bg-red-50 transition-colors cursor-pointer"
+                    className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 rounded-xl border border-red-200 text-red-600 text-xs font-semibold hover:bg-red-50 transition-colors cursor-pointer"
                   >
                     Delete
                   </button>

@@ -81,10 +81,10 @@ export default function AdminGalleryPage() {
 
   return (
     <div>
-      <h1 className="font-serif text-2xl font-bold text-[#1e3a5f] mb-2">Gallery Management</h1>
-      <p className="text-stone-500 mb-8">Manage church photo gallery by uploading or deleting photos.</p>
+      <h1 className="font-serif text-xl sm:text-2xl font-bold text-[#1e3a5f] mb-1 sm:mb-2">Gallery Management</h1>
+      <p className="text-stone-500 mb-6 sm:mb-8 text-sm">Manage church photo gallery by uploading or deleting photos.</p>
 
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-200 mb-8 max-w-xl">
+      <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-stone-200 mb-6 sm:mb-8 w-full max-w-xl">
         <h2 className="font-semibold text-lg text-[#1e3a5f] mb-4">Upload Gallery Image</h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -166,14 +166,14 @@ export default function AdminGalleryPage() {
       {images.length === 0 ? (
         <div className="text-stone-500 text-sm py-8">No photos in the gallery yet.</div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           {images.map((img) => (
             <div key={img.id} className="relative group rounded-xl overflow-hidden aspect-square border border-stone-200 bg-stone-50">
               <img src={img.src} alt={img.alt} className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300" />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/40 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center justify-center p-2">
                 <button
                   onClick={() => handleDelete(img.id)}
-                  className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-semibold shadow transition-colors cursor-pointer"
+                  className="w-full sm:w-auto px-3 py-2 sm:py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-semibold shadow transition-colors cursor-pointer"
                 >
                   Delete
                 </button>

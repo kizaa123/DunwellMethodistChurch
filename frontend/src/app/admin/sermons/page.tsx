@@ -115,12 +115,12 @@ export default function AdminSermonsPage() {
 
   return (
     <div>
-      <h1 className="font-serif text-2xl font-bold text-[#1e3a5f] mb-2">Sermons Management</h1>
-      <p className="text-stone-500 mb-8">Upload new sermons and manage existing library entries</p>
+      <h1 className="font-serif text-xl sm:text-2xl font-bold text-[#1e3a5f] mb-1 sm:mb-2">Sermons Management</h1>
+      <p className="text-stone-500 mb-6 sm:mb-8 text-sm">Upload new sermons and manage existing library entries</p>
 
-      <div className="grid lg:grid-cols-3 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8 items-start">
         {/* Form Column */}
-        <div className="lg:col-span-1 bg-white rounded-xl p-6 shadow-sm border border-stone-200">
+        <div className="lg:col-span-1 bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-stone-200">
           <h2 className="font-serif text-lg font-bold text-[#1e3a5f] mb-4">
             {editingId ? "Edit Sermon" : "Upload New Sermon"}
           </h2>
@@ -170,7 +170,7 @@ export default function AdminSermonsPage() {
             </div>
 
             {/* isLive toggle */}
-            <div className="flex items-center justify-between p-3 rounded-lg border border-stone-200 bg-stone-50">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between p-3 rounded-lg border border-stone-200 bg-stone-50">
               <div>
                 <p className="text-xs font-semibold text-stone-700">🔴 Mark as Live Now</p>
                 <p className="text-[10px] text-stone-500 mt-0.5">Shows live badge and enables the Live Stream page</p>
@@ -203,7 +203,7 @@ export default function AdminSermonsPage() {
               />
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <button
                 type="submit"
                 disabled={status === "loading" || uploadingImage}
@@ -225,21 +225,21 @@ export default function AdminSermonsPage() {
         </div>
 
         {/* List Column */}
-        <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-sm border border-stone-200">
+        <div className="lg:col-span-2 bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-stone-200">
           <h2 className="font-serif text-lg font-bold text-[#1e3a5f] mb-4">Sermons Library</h2>
           {sermons.length === 0 ? (
             <div className="text-center py-10 text-stone-500 text-sm">No sermons uploaded yet.</div>
           ) : (
-            <div className="divide-y divide-stone-100 max-h-[600px] overflow-y-auto pr-2">
+            <div className="divide-y divide-stone-100 max-h-[600px] overflow-y-auto pr-1 sm:pr-2">
               {sermons.map((s) => (
                 <div
                   key={s.id}
-                  className={`py-4 flex justify-between items-center gap-4 animate-fade-in ${
+                  className={`py-4 flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center animate-fade-in ${
                     editingId === s.id ? "bg-stone-50 rounded-lg px-2 -mx-2" : ""
                   }`}
                 >
-                  <div className="flex gap-3 items-center min-w-0">
-                    <div className="w-16 aspect-video rounded overflow-hidden shrink-0 border border-stone-200 bg-stone-100 flex items-center justify-center relative">
+                  <div className="flex gap-3 items-start sm:items-center min-w-0 flex-1">
+                    <div className="w-20 sm:w-16 aspect-video rounded overflow-hidden shrink-0 border border-stone-200 bg-stone-100 flex items-center justify-center relative">
                       {s.thumbnail ? (
                         <img src={s.thumbnail} alt={s.title} className="w-full h-full object-cover" />
                       ) : (
@@ -252,30 +252,30 @@ export default function AdminSermonsPage() {
                         </span>
                       )}
                     </div>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <p className="font-semibold text-sm text-[#1e3a5f] truncate">{s.title}</p>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-semibold text-sm text-[#1e3a5f] break-words">{s.title}</p>
                         {s.isLive && (
                           <span className="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200">
                             Live
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-stone-500">
+                      <p className="text-xs text-stone-500 mt-0.5">
                         by {s.speaker} · {new Date(s.date).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
-                  <div className="flex gap-2 shrink-0">
+                  <div className="flex gap-2 shrink-0 w-full sm:w-auto">
                     <button
                       onClick={() => handleEdit(s)}
-                      className="px-3 py-1.5 rounded-lg border border-stone-200 text-stone-600 hover:bg-stone-50 text-xs font-semibold transition-colors cursor-pointer"
+                      className="flex-1 sm:flex-none px-3 py-2 sm:py-1.5 rounded-lg border border-stone-200 text-stone-600 hover:bg-stone-50 text-xs font-semibold transition-colors cursor-pointer"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(s.id)}
-                      className="px-3 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 text-xs font-semibold transition-colors cursor-pointer"
+                      className="flex-1 sm:flex-none px-3 py-2 sm:py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 text-xs font-semibold transition-colors cursor-pointer"
                     >
                       Delete
                     </button>

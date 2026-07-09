@@ -47,14 +47,14 @@ export default function AdminPrayerRequestsPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-[#1e3a5f] mb-1">Prayer Requests</h1>
-          <p className="text-xs text-stone-500">Confidential prayer submissions from church members</p>
+          <h1 className="font-serif text-xl sm:text-2xl font-bold text-[#1e3a5f] mb-1">Prayer Requests</h1>
+          <p className="text-xs sm:text-sm text-stone-500">Confidential prayer submissions from church members</p>
         </div>
         <button
           onClick={fetchRequests}
-          className="px-4 py-2 text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg transition-colors cursor-pointer"
+          className="w-full sm:w-auto px-4 py-2.5 sm:py-2 text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg transition-colors cursor-pointer"
         >
           🔄 Refresh List
         </button>
@@ -75,13 +75,13 @@ export default function AdminPrayerRequestsPage() {
           {requests.map((req) => (
             <div
               key={req.id}
-              className="bg-white rounded-2xl p-6 shadow-sm border border-stone-200 flex flex-col md:flex-row justify-between gap-4"
+              className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-stone-200 flex flex-col gap-4"
             >
               <div className="space-y-2 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
                   <span className="font-semibold text-sm text-[#1e3a5f]">{req.memberName}</span>
-                  <span className="text-xs text-stone-400">({req.email})</span>
-                  <span className="text-[10px] text-stone-400 ml-auto md:ml-2">
+                  <span className="text-xs text-stone-400 break-all">({req.email})</span>
+                  <span className="text-[10px] text-stone-400 sm:ml-auto">
                     Submitted {new Date(req.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                   </span>
                 </div>
@@ -90,10 +90,10 @@ export default function AdminPrayerRequestsPage() {
                 </p>
               </div>
 
-              <div className="self-end md:self-center shrink-0">
+              <div className="w-full sm:w-auto sm:self-end shrink-0">
                 <button
                   onClick={() => handleDelete(req.id)}
-                  className="px-3.5 py-1.5 rounded-lg border border-red-200 text-red-600 text-xs font-semibold hover:bg-red-50 transition-colors cursor-pointer"
+                  className="w-full sm:w-auto px-3.5 py-2 sm:py-1.5 rounded-lg border border-red-200 text-red-600 text-xs font-semibold hover:bg-red-50 transition-colors cursor-pointer"
                 >
                   Delete Request
                 </button>

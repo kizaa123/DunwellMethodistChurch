@@ -72,12 +72,12 @@ export default function AdminAnnouncementsPage() {
 
   return (
     <div>
-      <h1 className="font-serif text-2xl font-bold text-[#1e3a5f] mb-2">Announcements Management</h1>
-      <p className="text-stone-500 mb-8">Post announcements and manage existing board entries for the congregation</p>
+      <h1 className="font-serif text-xl sm:text-2xl font-bold text-[#1e3a5f] mb-1 sm:mb-2">Announcements Management</h1>
+      <p className="text-stone-500 mb-6 sm:mb-8 text-sm">Post announcements and manage existing board entries for the congregation</p>
 
-      <div className="grid lg:grid-cols-3 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8 items-start">
         {/* Form Column */}
-        <div className="lg:col-span-1 bg-white rounded-xl p-6 shadow-sm border border-stone-200">
+        <div className="lg:col-span-1 bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-stone-200">
           <h2 className="font-serif text-lg font-bold text-[#1e3a5f] mb-4">
             {editingId ? "Edit Announcement" : "Post Announcement"}
           </h2>
@@ -112,7 +112,7 @@ export default function AdminAnnouncementsPage() {
                 className="w-full px-4 py-2 rounded-lg border border-[#1e3a5f]/30 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]/30 focus:border-[#1e3a5f] text-sm resize-none"
               />
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <button
                 type="submit"
                 disabled={status === "loading"}
@@ -134,29 +134,29 @@ export default function AdminAnnouncementsPage() {
         </div>
 
         {/* List Column */}
-        <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-sm border border-stone-200">
+        <div className="lg:col-span-2 bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-stone-200">
           <h2 className="font-serif text-lg font-bold text-[#1e3a5f] mb-4">Announcement Board</h2>
           {announcements.length === 0 ? (
             <div className="text-center py-10 text-stone-500 text-sm">No announcements posted yet.</div>
           ) : (
-            <div className="divide-y divide-stone-100 max-h-[600px] overflow-y-auto pr-2">
+            <div className="divide-y divide-stone-100 max-h-[600px] overflow-y-auto pr-1 sm:pr-2">
               {announcements.map((ann) => (
-                <div key={ann.id} className={`py-4 flex justify-between items-start gap-4 animate-fade-in ${editingId === ann.id ? "bg-stone-50 rounded-lg px-2 -mx-2" : ""}`}>
+                <div key={ann.id} className={`py-4 flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-start animate-fade-in ${editingId === ann.id ? "bg-stone-50 rounded-lg px-2 -mx-2" : ""}`}>
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-sm text-[#1e3a5f]">{ann.title}</p>
+                    <p className="font-semibold text-sm text-[#1e3a5f] break-words">{ann.title}</p>
                     <p className="text-xs text-stone-600 mt-1 whitespace-pre-line leading-relaxed">{ann.content}</p>
                     <p className="text-[10px] text-stone-400 mt-2">Posted on {new Date(ann.createdAt).toLocaleDateString()}</p>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-2 shrink-0">
+                  <div className="flex gap-2 shrink-0 w-full sm:w-auto">
                     <button
                       onClick={() => handleEdit(ann)}
-                      className="px-3 py-1.5 rounded-lg border border-stone-200 text-stone-600 hover:bg-stone-50 text-xs font-semibold transition-colors cursor-pointer"
+                      className="flex-1 sm:flex-none px-3 py-2 sm:py-1.5 rounded-lg border border-stone-200 text-stone-600 hover:bg-stone-50 text-xs font-semibold transition-colors cursor-pointer"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(ann.id)}
-                      className="px-3 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 text-xs font-semibold transition-colors cursor-pointer"
+                      className="flex-1 sm:flex-none px-3 py-2 sm:py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 text-xs font-semibold transition-colors cursor-pointer"
                     >
                       Delete
                     </button>
