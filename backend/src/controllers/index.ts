@@ -15,6 +15,11 @@ import {
   MinistryService,
   EventRegistrationService,
 } from "../services";
+import {
+  recordHeartbeat,
+  removeViewer,
+  getActiveViewerCount,
+} from "../services/liveViewers";
 
 const authService = new AuthService();
 const sermonService = new SermonService();
@@ -452,6 +457,33 @@ export class MinistryController {
     } catch (err) {
       res.status(404).json({ message: err instanceof Error ? err.message : "Deletion failed" });
     }
+  }
+}
+
+export class LiveViewerController {
+  async heartbeat(req: AuthRequest, res: Response) {
+    const { sermonId, sessionId } = req.body;
+    if (!sermonId || !sessionId) {
+      res.status(400).json({ message: "sermonId and sessionId are required" });
+      return;
+    }
+    const count = recordHeartbeat(String(sermonId), String(sessionId));
+    res.json({ count });
+  }
+
+  async leave(req: AuthRequest, res: Response) {
+    const { sermonId, sessionId } = req.body;
+    if (!sermonId || !sessionId) {
+      res.status(400).json({ message: "sermonId and sessionId are required" });
+      return;
+    }
+    const count = removeViewer(String(sermonId), String(sessionId));
+    res.json({ count });
+  }
+
+  async getCount(req: AuthRequest, res: Response) {
+    const sermonId = req.params.sermonId as string;
+    res.json({ count: getActiveViewerCount(sermonId) });
   }
 }
 

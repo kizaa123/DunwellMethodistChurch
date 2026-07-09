@@ -42,7 +42,7 @@ export default function Hero() {
 
   return (
     <section
-      className="relative min-h-[88vh] flex items-center overflow-hidden"
+      className="relative min-h-[72vh] sm:min-h-[80vh] lg:min-h-[88vh] flex items-center overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -74,65 +74,65 @@ export default function Hero() {
       />
 
       {/* Content */}
-      <div className="relative w-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24 text-center" style={{ zIndex: 2 }}>
+      <div className="relative w-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20 lg:py-24 pb-16 sm:pb-20 text-center" style={{ zIndex: 2 }}>
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full text-white/90 text-sm font-medium tracking-wider uppercase"
+        <div className="inline-flex items-center gap-2 mb-4 sm:mb-6 px-3 sm:px-4 py-1.5 rounded-full text-white/90 text-[10px] sm:text-sm font-medium tracking-wider uppercase"
           style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.2)" }}>
-          <span className="inline-block w-2 h-2 rounded-full animate-pulse" style={{ background: "hsl(41, 74%, 57%)" }} />
+          <span className="inline-block w-2 h-2 rounded-full animate-pulse shrink-0" style={{ background: "hsl(41, 74%, 57%)" }} />
           Welcome to our community
         </div>
 
         {/* Headline — transitions per slide */}
-        <h1 className="font-serif text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight text-balance transition-all duration-700">
+        <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight text-balance transition-all duration-700 px-1">
           {slides[current].headline}
         </h1>
 
-        <div className="mx-auto mb-6 h-1 w-20 rounded-full" style={{ background: "linear-gradient(90deg, hsl(41,74%,47%), hsl(41,74%,60%))" }} />
+        <div className="mx-auto mb-4 sm:mb-6 h-1 w-16 sm:w-20 rounded-full" style={{ background: "linear-gradient(90deg, hsl(41,74%,47%), hsl(41,74%,60%))" }} />
 
-        <p className="text-lg sm:text-xl text-blue-100 max-w-2xl mx-auto mb-10 leading-relaxed text-balance transition-all duration-700">
+        <p className="text-sm sm:text-lg md:text-xl text-blue-100 max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed text-balance transition-all duration-700 px-1">
           {slides[current].sub}
         </p>
 
         {/* CTAs */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/about" className="btn-gold hover-glow-gold shadow-lg">Plan Your Visit</Link>
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center max-w-sm sm:max-w-none mx-auto">
+          <Link href="/about" className="btn-gold hover-glow-gold shadow-lg w-full sm:w-auto text-center justify-center">Plan Your Visit</Link>
           <Link
             href="/sermons"
-            className="px-7 py-3 rounded-full border-2 border-white/30 text-white font-semibold hover:bg-white/10 hover:border-white/50 transition-all duration-200"
+            className="w-full sm:w-auto px-7 py-3 rounded-full border-2 border-white/30 text-white font-semibold hover:bg-white/10 hover:border-white/50 transition-all duration-200 text-center"
           >
             Watch Sermons
           </Link>
         </div>
 
         {/* Service time cards */}
-        <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl mx-auto">
+        <div className="mt-10 sm:mt-14 lg:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 max-w-3xl mx-auto">
           {churchInfo.serviceTimes.map((service) => (
             <div
               key={service.day}
-              className="rounded-2xl p-5 text-left"
+              className="rounded-xl sm:rounded-2xl p-4 sm:p-5 text-left"
               style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.18)" }}
             >
-              <p className="font-semibold text-sm mb-1 uppercase tracking-wider" style={{ color: "hsl(41, 74%, 65%)" }}>
+              <p className="font-semibold text-xs sm:text-sm mb-1 uppercase tracking-wider" style={{ color: "hsl(41, 74%, 65%)" }}>
                 {service.day}
               </p>
-              <p className="text-white font-bold text-lg leading-tight">{service.time}</p>
-              <p className="text-blue-200 text-xs mt-1">{service.type}</p>
+              <p className="text-white font-bold text-base sm:text-lg leading-tight">{service.time}</p>
+              <p className="text-blue-200 text-[11px] sm:text-xs mt-1">{service.type}</p>
             </div>
           ))}
-          <div className="rounded-2xl p-5 text-left"
+          <div className="rounded-xl sm:rounded-2xl p-4 sm:p-5 text-left sm:col-span-2 lg:col-span-1"
             style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.18)" }}>
-            <p className="font-semibold text-sm mb-1 uppercase tracking-wider" style={{ color: "hsl(41, 74%, 65%)" }}>Location</p>
-            <p className="text-white font-bold leading-tight">{churchInfo.address.split(",")[0]}</p>
-            <p className="text-blue-200 text-xs mt-1">All are welcome</p>
+            <p className="font-semibold text-xs sm:text-sm mb-1 uppercase tracking-wider" style={{ color: "hsl(41, 74%, 65%)" }}>Location</p>
+            <p className="text-white font-bold text-sm sm:text-base leading-tight">{churchInfo.address.split(",")[0]}</p>
+            <p className="text-blue-200 text-[11px] sm:text-xs mt-1">All are welcome</p>
           </div>
         </div>
       </div>
 
-      {/* Prev / Next arrows */}
+      {/* Prev / Next arrows — hidden on mobile */}
       <button
         onClick={prev}
         aria-label="Previous slide"
-        className="absolute left-4 top-1/2 -translate-y-1/2 h-11 w-11 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 cursor-pointer"
+        className="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 h-11 w-11 rounded-full items-center justify-center transition-all duration-200 hover:scale-110 cursor-pointer"
         style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.25)", zIndex: 3 }}
       >
         <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -142,7 +142,7 @@ export default function Hero() {
       <button
         onClick={next}
         aria-label="Next slide"
-        className="absolute right-4 top-1/2 -translate-y-1/2 h-11 w-11 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 cursor-pointer"
+        className="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 h-11 w-11 rounded-full items-center justify-center transition-all duration-200 hover:scale-110 cursor-pointer"
         style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.25)", zIndex: 3 }}
       >
         <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -151,13 +151,13 @@ export default function Hero() {
       </button>
 
       {/* Dot indicators */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2" style={{ zIndex: 3 }}>
+      <div className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 flex gap-2" style={{ zIndex: 3 }}>
         {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}
             aria-label={`Go to slide ${i + 1}`}
-            className="rounded-full transition-all duration-300 cursor-pointer"
+            className="rounded-full transition-all duration-300 cursor-pointer p-1 touch-manipulation"
             style={{
               width: i === current ? "28px" : "8px",
               height: "8px",
@@ -167,8 +167,8 @@ export default function Hero() {
         ))}
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 right-8 flex flex-col items-center gap-1 opacity-50" style={{ zIndex: 3 }}>
+      {/* Scroll indicator — hidden on mobile */}
+      <div className="absolute bottom-8 right-8 hidden md:flex flex-col items-center gap-1 opacity-50" style={{ zIndex: 3 }}>
         <span className="text-white text-[10px] tracking-widest uppercase">Scroll</span>
         <svg className="w-4 h-4 text-white animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />

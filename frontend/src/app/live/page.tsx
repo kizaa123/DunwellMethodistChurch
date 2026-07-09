@@ -5,12 +5,17 @@ import Link from "next/link";
 import { isSermonLive } from "@/lib/api";
 import { Sermon } from "@/types";
 import { featuredSermons } from "@/lib/data";
+import { useLiveViewers } from "@/hooks/useLiveViewers";
+import LiveViewerBadge from "@/components/LiveViewerBadge";
+import TestimonyWall from "@/components/TestimonyWall";
+import type { Testimony } from "@/components/TestimonyWall";
 
 export default function LivePage() {
   const [sermons, setSermons] = useState<Sermon[]>([]);
   const [activeSermon, setActiveSermon] = useState<Sermon | null>(null);
   const [liveSermon, setLiveSermon] = useState<Sermon | null>(null);
   const [loading, setLoading] = useState(true);
+  const [testimonies, setTestimonies] = useState<Testimony[]>([]);
 
   useEffect(() => {
     const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
@@ -62,6 +67,13 @@ export default function LivePage() {
         }
       })
       .finally(() => setLoading(false));
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"}/testimonies`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) setTestimonies(data);
+      })
+      .catch(console.error);
   }, []);
 
   function getYouTubeEmbedUrl(url: string) {
@@ -95,6 +107,13 @@ export default function LivePage() {
     }
   };
 
+  const isWatchingLive =
+    !!liveSermon && !!activeSermon && activeSermon.id === liveSermon.id;
+  const viewerCount = useLiveViewers(liveSermon?.id, {
+    track: !loading && isWatchingLive,
+    poll: !loading && !!liveSermon,
+  });
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0b131e] flex items-center justify-center">
@@ -122,22 +141,32 @@ export default function LivePage() {
   }
 
   const youtubeEmbedUrl = activeSermon.videoUrl ? getYouTubeEmbedUrl(activeSermon.videoUrl) : null;
-  const isCurrentlyLive = liveSermon && activeSermon.id === liveSermon.id;
+  const isCurrentlyLive = isWatchingLive;
 
   return (
     <div className="min-h-screen text-white bg-[#0b131e] pb-16">
       {/* Dynamic Streaming Status Banner */}
       {isCurrentlyLive ? (
-        <div className="w-full bg-red-700 text-white text-xs font-bold tracking-widest uppercase py-2.5 px-4 flex items-center justify-center gap-2 shadow-md">
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white" />
+        <div className="w-full bg-red-700 text-white text-xs font-bold tracking-widest uppercase py-2.5 px-4 flex flex-wrap items-center justify-center gap-3 shadow-md">
+          <span className="inline-flex items-center gap-2">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white" />
+            </span>
+            Live Broadcast — Service Online
           </span>
-          Live Broadcast — Service Online
+          <LiveViewerBadge
+            count={viewerCount}
+            className="normal-case tracking-normal text-[11px] sm:text-xs bg-white/15 px-3 py-1 rounded-full border border-white/20"
+          />
         </div>
       ) : liveSermon ? (
-        <div className="w-full bg-amber-600 text-white text-xs font-bold tracking-widest uppercase py-2.5 px-4 flex items-center justify-center gap-3 shadow-md flex-wrap text-center">
+        <div className="w-full bg-amber-600 text-white text-xs font-bold tracking-widest uppercase py-2.5 px-4 flex flex-wrap items-center justify-center gap-3 shadow-md text-center">
           <span>You are viewing a past service archive.</span>
+          <LiveViewerBadge
+            count={viewerCount}
+            className="normal-case tracking-normal text-[10px] bg-white/15 px-2.5 py-1 rounded-full border border-white/20"
+          />
           <button
             onClick={() => {
               setActiveSermon(liveSermon);
@@ -159,20 +188,26 @@ export default function LivePage() {
       )}
 
       {/* Main Workspace Grid */}
-      <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 lg:py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+      <div className="mx-auto max-w-[1440px] sm:px-6 lg:px-8 lg:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
           
-          {/* Main Video Stream Container (2/3 width on desktop) */}
-          <div className="lg:col-span-2 space-y-4">
+          {/* Main Video Stream Container (3/4 width on desktop) */}
+          <div className="lg:col-span-3 space-y-4">
             <div className="relative aspect-video w-full bg-black sm:rounded-2xl overflow-hidden shadow-2xl border border-white/10">
               {/* Floating live indicator on the player */}
               {isCurrentlyLive && (
-                <div className="absolute top-4 left-4 bg-red-600 text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded flex items-center gap-1.5 shadow-md z-20 animate-pulse">
-                  <span className="relative flex h-1.5 w-1.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
-                  </span>
-                  Live Now
+                <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2 z-20">
+                  <div className="bg-red-600 text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded flex items-center gap-1.5 shadow-md animate-pulse">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
+                    </span>
+                    Live Now
+                  </div>
+                  <LiveViewerBadge
+                    count={viewerCount}
+                    className="text-[10px] text-white bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded border border-white/20"
+                  />
                 </div>
               )}
 
@@ -253,6 +288,12 @@ export default function LivePage() {
                   <span className="font-medium text-white/80">by {activeSermon.speaker}</span>
                   <span className="text-white/30 hidden sm:inline">•</span>
                   <span>{getFormattedDate(activeSermon.date)}</span>
+                  {isCurrentlyLive && (
+                    <>
+                      <span className="text-white/30 hidden sm:inline">•</span>
+                      <LiveViewerBadge count={viewerCount} className="text-amber-400 text-xs" />
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -266,8 +307,24 @@ export default function LivePage() {
             </div>
           </div>
 
-          {/* Recent Videos List Section (1/3 width on desktop) */}
-          <div className="lg:col-span-1 px-4 sm:px-0 space-y-4">
+          {/* Sidebar: Testimonies + Recent Broadcasts */}
+          <div className="lg:col-span-1 px-4 sm:px-0 space-y-5">
+            {testimonies.length > 0 && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 border-b border-white/10 pb-2">
+                  <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
+                  <h2 className="font-serif text-sm font-bold text-white/90">Live Testimonies</h2>
+                </div>
+                <TestimonyWall testimonies={testimonies} fullscreen />
+                <Link
+                  href="/members/profile"
+                  className="block text-center text-[10px] text-amber-400/70 hover:text-amber-400 transition-colors"
+                >
+                  Share your testimony →
+                </Link>
+              </div>
+            )}
+
             <h2 className="font-serif text-lg font-bold border-b border-white/10 pb-2 flex items-center justify-between">
               <span>Recent Broadcasts</span>
               <span className="text-xs font-sans text-white/40 font-normal">{sermons.length} videos</span>
@@ -308,6 +365,15 @@ export default function LivePage() {
                       )}
 
                       {/* Small Live indicator overlay on thumbnail */}
+                      {isLiveItem && (
+                        <span className="absolute bottom-1 left-1 bg-black/60 text-white text-[8px] font-bold px-1.5 py-0.5 rounded tracking-wider uppercase flex items-center gap-1">
+                          <svg className="h-2.5 w-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1 1 0 010-.644C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          {viewerCount}
+                        </span>
+                      )}
                       {isLiveItem && (
                         <span className="absolute bottom-1 right-1 bg-red-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded tracking-wider uppercase animate-pulse">
                           Live

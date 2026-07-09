@@ -237,6 +237,22 @@ export const api = {
     deleteMinistry: (id: string) =>
       fetchApi<{ message: string }>(`/admin/ministries/${id}`, { method: "DELETE" }),
   },
+
+  // Live viewer presence
+  liveViewerHeartbeat: (sermonId: string, sessionId: string) =>
+    fetchApi<{ count: number }>("/live/viewers/heartbeat", {
+      method: "POST",
+      body: JSON.stringify({ sermonId, sessionId }),
+    }),
+
+  liveViewerLeave: (sermonId: string, sessionId: string) =>
+    fetchApi<{ count: number }>("/live/viewers/leave", {
+      method: "POST",
+      body: JSON.stringify({ sermonId, sessionId }),
+    }),
+
+  getLiveViewerCount: (sermonId: string) =>
+    fetchApi<{ count: number }>(`/live/viewers/${sermonId}`),
 };
 
 

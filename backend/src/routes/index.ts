@@ -14,6 +14,7 @@ import {
   PrayerRequestController,
   TestimonyController,
   MinistryController,
+  LiveViewerController,
 } from "../controllers";
 import uploadRouter from "./upload";
 
@@ -30,6 +31,7 @@ const gallery = new GalleryController();
 const prayer = new PrayerRequestController();
 const testimony = new TestimonyController();
 const ministry = new MinistryController();
+const liveViewer = new LiveViewerController();
 
 const router = Router();
 
@@ -57,6 +59,11 @@ router.post("/testimonies", testimony.create.bind(testimony));
 router.get("/testimonies", testimony.getPublic.bind(testimony));
 router.get("/ministries", ministry.getAll.bind(ministry));
 router.get("/ministries/:id", ministry.getById.bind(ministry));
+
+// Live viewer presence
+router.post("/live/viewers/heartbeat", liveViewer.heartbeat.bind(liveViewer));
+router.post("/live/viewers/leave", liveViewer.leave.bind(liveViewer));
+router.get("/live/viewers/:sermonId", liveViewer.getCount.bind(liveViewer));
 
 // Member self-service routes
 router.get("/members/me/donations", authenticate, donation.getMyDonations.bind(donation));

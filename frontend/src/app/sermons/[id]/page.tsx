@@ -9,6 +9,17 @@ import type { Testimony } from "@/components/TestimonyWall";
 import { api } from "@/lib/api";
 import { Sermon } from "@/types";
 import { featuredSermons } from "@/lib/data";
+import { useLiveViewers } from "@/hooks/useLiveViewers";
+import LiveViewerBadge from "@/components/LiveViewerBadge";
+
+function computeIsLive(sermon: Sermon | null): boolean {
+  if (!sermon) return false;
+  if (sermon.isLive) return true;
+  const now = new Date();
+  const sermonTime = new Date(sermon.date);
+  const diffHours = (now.getTime() - sermonTime.getTime()) / (1000 * 60 * 60);
+  return diffHours >= -1 && diffHours <= 3;
+}
 
 export default function SermonDetailPage() {
   const params = useParams();
@@ -41,6 +52,12 @@ export default function SermonDetailPage() {
       .then((data) => { if (Array.isArray(data)) setTestimonies(data); })
       .catch(console.error);
   }, [id]);
+
+  const isLiveSession = computeIsLive(sermon);
+  const viewerCount = useLiveViewers(sermon?.id, {
+    track: !loading && isLiveSession,
+    poll: !loading && isLiveSession,
+  });
 
   function getYouTubeEmbedUrl(url: string) {
     if (!url) return null;
@@ -91,10 +108,7 @@ export default function SermonDetailPage() {
   });
 
   // Auto-detect LIVE: same logic as SermonCard
-  const now = new Date();
-  const sermonTime = new Date(sermon.date);
-  const diffHours = (now.getTime() - sermonTime.getTime()) / (1000 * 60 * 60);
-  const isLive = sermon.isLive || (diffHours >= -1 && diffHours <= 3);
+  const isLive = isLiveSession;
 
   const youtubeEmbedUrl = sermon.videoUrl ? getYouTubeEmbedUrl(sermon.videoUrl) : null;
 
@@ -104,18 +118,24 @@ export default function SermonDetailPage() {
       <>
         {/* Live Service Banner */}
         <div
-          className="w-full py-2 text-center text-white text-xs font-bold tracking-widest uppercase flex items-center justify-center gap-2"
+          className="w-full py-2.5 px-4 text-center text-white text-xs font-bold tracking-widest uppercase flex flex-wrap items-center justify-center gap-3"
           style={{ background: "hsl(0,72%,42%)" }}
         >
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
+          <span className="inline-flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
+            </span>
+            Live Service — {formattedDate}
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
+            </span>
           </span>
-          Live Service — {formattedDate}
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
-          </span>
+          <LiveViewerBadge
+            count={viewerCount}
+            className="normal-case tracking-normal text-[11px] bg-white/15 px-3 py-1 rounded-full border border-white/20"
+          />
         </div>
 
         <div
@@ -144,8 +164,9 @@ export default function SermonDetailPage() {
                 </span>
                 Live Now
               </div>
-              <h1 className="font-serif text-xl sm:text-2xl font-bold text-white">{sermon.title}</h1>
-              <span className="text-white/40 text-sm ml-auto hidden sm:block">by {sermon.speaker}</span>
+              <LiveViewerBadge count={viewerCount} className="text-amber-300 text-xs" />
+              <h1 className="font-serif text-xl sm:text-2xl font-bold text-white w-full sm:w-auto">{sermon.title}</h1>
+              <span className="text-white/40 text-sm sm:ml-auto hidden sm:block">by {sermon.speaker}</span>
             </div>
 
             {/* Main grid: Video + Sidebar */}
@@ -243,9 +264,7 @@ export default function SermonDetailPage() {
                 </div>
 
                 {testimonies.length > 0 ? (
-                  <div className="rounded-2xl overflow-hidden border border-white/10">
-                    <TestimonyWall testimonies={testimonies} fullscreen />
-                  </div>
+                  <TestimonyWall testimonies={testimonies} fullscreen />
                 ) : (
                   <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
                     <p className="text-4xl mb-3">✨</p>
