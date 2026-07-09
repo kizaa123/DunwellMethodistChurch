@@ -11,6 +11,7 @@ const navLinks = [
   { href: "/about", label: "About" },
   { href: "/ministries", label: "Ministries" },
   { href: "/sermons", label: "Sermons" },
+  { href: "/live", label: "Live" },
   { href: "/events", label: "Events" },
   { href: "/donations", label: "Giving" },
   { href: "/contact", label: "Contact" },
@@ -96,7 +97,7 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="relative px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-150"
+                  className="relative px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-150 flex items-center gap-1.5"
                   style={{
                     color: active ? "hsl(212,51%,24%)" : "hsl(24,5%,38%)",
                     background: active ? "hsl(212,51%,96%)" : "transparent",
@@ -115,6 +116,12 @@ export default function Navbar() {
                   }}
                 >
                   {link.label}
+                  {link.href === "/live" && isLiveNow && (
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600" />
+                    </span>
+                  )}
                   {active && (
                     <span
                       className="absolute bottom-0.5 left-1/2 -translate-x-1/2 h-0.5 w-4 rounded-full"
@@ -124,20 +131,6 @@ export default function Navbar() {
                 </Link>
               );
             })}
-            {/* LIVE badge - only when a sermon is broadcasting */}
-            {isLiveNow && (
-              <Link
-                href="/live"
-                className="ml-1 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold tracking-wider uppercase text-white transition-all hover:scale-105"
-                style={{ background: "hsl(0,72%,42%)" }}
-              >
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
-                </span>
-                Live
-              </Link>
-            )}
             <Link
               href={isLoggedIn ? "/members/profile" : "/members/login"}
               className="ml-3 btn-gold text-sm px-5 py-2"
@@ -150,7 +143,7 @@ export default function Navbar() {
           {/* Hamburger */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden p-2 rounded-lg transition-colors"
+            className="lg:hidden p-3 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
             style={{ color: "hsl(24,5%,38%)" }}
             aria-label="Toggle menu"
             aria-expanded={mobileOpen}
@@ -181,7 +174,7 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 mb-0.5"
+                  className="flex items-center px-3 py-3 rounded-lg text-sm font-medium transition-all duration-150 mb-0.5 min-h-[44px] touch-manipulation"
                   style={{
                     color: active ? "hsl(212,51%,24%)" : "hsl(24,5%,38%)",
                     background: active ? "hsl(212,51%,96%)" : "transparent",
@@ -194,29 +187,20 @@ export default function Navbar() {
                     />
                   )}
                   {link.label}
+                  {link.href === "/live" && isLiveNow && (
+                    <span className="ml-2 relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600" />
+                    </span>
+                  )}
                 </Link>
               );
             })}
-            {/* Live badge - mobile */}
-            {isLiveNow && (
-              <Link
-                href="/live"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-bold text-white mb-0.5"
-                style={{ background: "hsl(0,72%,42%)" }}
-              >
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
-                </span>
-                🔴 Live Service — Join Now
-              </Link>
-            )}
             <Link
               href={isLoggedIn ? "/members/profile" : "/members/login"}
               onClick={() => setMobileOpen(false)}
-              className="mt-3 w-full btn-gold text-sm"
-              style={{ display: "flex", justifyContent: "center" }}
+              className="mt-3 w-full btn-gold text-sm min-h-[48px] touch-manipulation"
+              style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
             >
               {isLoggedIn ? "My Portal" : "Member Portal"}
             </Link>

@@ -15,7 +15,7 @@ export default function PageHeader({ title, subtitle, badge }: PageHeaderProps) 
     >
       {/* Subtle grid */}
       <div
-        className="absolute inset-0 opacity-5"
+        className="absolute inset-0 opacity-5 pointer-events-none"
         style={{
           backgroundImage:
             "linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px)",

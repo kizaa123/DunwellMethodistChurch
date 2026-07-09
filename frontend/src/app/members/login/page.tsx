@@ -44,13 +44,13 @@ export default function MemberLoginPage() {
         subtitle={isLogin ? "Sign in to access your account" : "Create a new member account"}
       />
 
-      <section className="py-16 bg-stone-50">
+      <section className="py-10 sm:py-16 bg-stone-50">
         <div className="mx-auto max-w-md px-4 sm:px-6">
-          <div className="bg-white rounded-2xl p-8 shadow-sm border border-stone-200">
+          <div className="bg-white rounded-2xl p-5 sm:p-8 shadow-sm border border-stone-200">
             <div className="flex gap-2 mb-6">
               <button
                 onClick={() => setIsLogin(true)}
-                className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex-1 py-3 sm:py-2 rounded-lg text-sm font-medium transition-colors min-h-[44px] touch-manipulation ${
                   isLogin ? "bg-[#1e3a5f] text-white" : "bg-stone-100 text-stone-600"
                 }`}
               >
@@ -58,7 +58,7 @@ export default function MemberLoginPage() {
               </button>
               <button
                 onClick={() => setIsLogin(false)}
-                className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex-1 py-3 sm:py-2 rounded-lg text-sm font-medium transition-colors min-h-[44px] touch-manipulation ${
                   !isLogin ? "bg-[#1e3a5f] text-white" : "bg-stone-100 text-stone-600"
                 }`}
               >
@@ -106,14 +106,14 @@ export default function MemberLoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 rounded-lg bg-[#1e3a5f] text-white font-medium hover:bg-[#2a5082] transition-colors disabled:opacity-60"
+                className="w-full py-3.5 rounded-lg bg-[#1e3a5f] text-white font-medium hover:bg-[#2a5082] transition-colors disabled:opacity-60 min-h-[48px] touch-manipulation"
               >
                 {loading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
               </button>
             </form>
 
             <p className="text-center text-sm text-stone-500 mt-4">
-              <Link href="/" className="text-[#c9a227] hover:underline">
+              <Link href="/" className="inline-flex items-center justify-center min-h-[44px] px-3 text-[#c9a227] hover:underline touch-manipulation">
                 Back to home
               </Link>
             </p>

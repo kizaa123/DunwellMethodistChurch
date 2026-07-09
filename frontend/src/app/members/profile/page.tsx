@@ -178,45 +178,45 @@ export default function MemberProfilePage() {
     <>
       <PageHeader title="Member Portal" subtitle={`Welcome back, ${user.name}`} />
 
-      <section className="py-12 bg-stone-50 min-h-[70vh]">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-8 animate-fade-in">
+      <section className="py-8 sm:py-12 bg-stone-50 min-h-[70vh]">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8 animate-fade-in">
           
           {/* Header Banner Card */}
           <div
-            className="rounded-3xl p-6 md:p-8 text-white relative overflow-hidden shadow-lg border border-[#1e3a5f]/10"
+            className="rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 text-white relative overflow-hidden shadow-lg border border-[#1e3a5f]/10"
             style={{
               background: "linear-gradient(135deg, hsl(212,51%,18%) 0%, hsl(212,51%,28%) 50%, hsl(220,40%,22%) 100%)"
             }}
           >
             {/* Watermark grid */}
             <div
-              className="absolute inset-0 opacity-[0.05]"
+              className="absolute inset-0 opacity-[0.05] pointer-events-none"
               style={{
                 backgroundImage:
                   "linear-gradient(rgba(255,255,255,.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.4) 1px, transparent 1px)",
                 backgroundSize: "24px 24px"
               }}
             />
-            <div className="relative flex flex-col md:flex-row justify-between items-center gap-6">
-              <div className="flex flex-col md:flex-row items-center gap-5 text-center md:text-left">
-                <div className="h-20 w-20 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white border border-white/20 font-serif text-4xl shrink-0 shadow-inner">
+            <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-4 sm:gap-6">
+              <div className="flex flex-col md:flex-row items-center gap-4 sm:gap-5 text-center md:text-left w-full md:w-auto">
+                <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white border border-white/20 font-serif text-3xl sm:text-4xl shrink-0 shadow-inner">
                   {user.name.charAt(0)}
                 </div>
-                <div>
+                <div className="min-w-0">
                   <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5">
-                    <h2 className="font-serif text-2xl font-bold">{user.name}</h2>
+                    <h2 className="font-serif text-xl sm:text-2xl font-bold break-words">{user.name}</h2>
                     <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] font-bold tracking-wider uppercase">
                       {user.role}
                     </span>
                   </div>
-                  <p className="text-white/60 text-sm mt-1">{user.email}</p>
+                  <p className="text-white/60 text-sm mt-1 break-all">{user.email}</p>
                 </div>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full md:w-auto">
                 <button
                   onClick={handleLogout}
-                  className="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/20 text-white text-xs font-semibold transition-all cursor-pointer shadow-sm hover:shadow"
+                  className="w-full md:w-auto px-5 py-3 sm:py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/20 text-white text-xs font-semibold transition-all cursor-pointer shadow-sm hover:shadow min-h-[44px]"
                 >
                   🚪 Logout
                 </button>
@@ -224,7 +224,7 @@ export default function MemberProfilePage() {
             </div>
 
             {/* Navigation Tabs */}
-            <div className="flex flex-wrap gap-2 mt-8 pt-6 border-t border-white/10">
+            <div className="relative z-10 grid grid-cols-2 sm:flex sm:flex-wrap gap-2 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-white/10">
               {[
                 { id: "overview",  label: "🏠 Dashboard",          desc: "Announcements & Groups" },
                 { id: "giving",    label: "💝 Give Offering",       desc: "Tithes & Support" },
@@ -235,14 +235,14 @@ export default function MemberProfilePage() {
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
-                    className={`px-5 py-2.5 rounded-xl text-left transition-all duration-150 cursor-pointer flex-1 min-w-[140px] ${
+                    onClick={() => setActiveTab(tab.id as "overview" | "giving" | "interact" | "history")}
+                    className={`px-3 sm:px-5 py-3 rounded-xl text-left transition-all duration-150 cursor-pointer sm:flex-1 sm:min-w-[140px] min-h-[44px] touch-manipulation ${
                       active
-                        ? "bg-[#c9a227] text-white shadow-md scale-[1.02]"
-                        : "bg-white/5 hover:bg-white/10 text-white/80 hover:text-white"
+                        ? "bg-[#c9a227] text-white shadow-md"
+                        : "bg-white/5 hover:bg-white/10 active:bg-white/15 text-white/80 hover:text-white"
                     }`}
                   >
-                    <p className="font-bold text-xs">{tab.label}</p>
+                    <p className="font-bold text-[11px] sm:text-xs leading-tight">{tab.label}</p>
                     <p className="text-[9px] opacity-75 mt-0.5 hidden sm:block">{tab.desc}</p>
                   </button>
                 );
@@ -253,10 +253,10 @@ export default function MemberProfilePage() {
           {/* ──────────────── TAB CONTENT ──────────────── */}
           <div className="transition-all duration-300">
             {activeTab === "overview" && (
-              <div className="grid md:grid-cols-3 gap-8 items-start">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 items-start">
                 {/* Left Columns (wider): Announcements */}
-                <div className="md:col-span-2 space-y-6">
-                  <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200">
+                <div className="md:col-span-2 space-y-4 sm:space-y-6">
+                  <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-stone-200">
                     <div className="flex items-center gap-3 mb-5 pb-3 border-b border-stone-100">
                       <div className="h-9 w-9 rounded-xl flex items-center justify-center bg-amber-50 text-amber-600 shrink-0 border border-amber-100">
                         📢
@@ -304,8 +304,8 @@ export default function MemberProfilePage() {
                 </div>
 
                 {/* Right Column: Joined Ministries & Events */}
-                <div className="md:col-span-1 space-y-6">
-                  <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200">
+                <div className="md:col-span-1 space-y-4 sm:space-y-6">
+                  <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-stone-200">
                     <div className="flex items-center gap-3 mb-4 pb-3 border-b border-stone-100">
                       <div className="h-9 w-9 rounded-xl flex items-center justify-center bg-indigo-50 text-indigo-700 shrink-0 border border-indigo-100">
                         📅
@@ -319,11 +319,11 @@ export default function MemberProfilePage() {
                     {loadingEvents ? (
                       <div className="text-center py-6 text-stone-400 text-xs">Loading...</div>
                     ) : eventRegistrations.length === 0 ? (
-                      <div className="text-center py-8 text-stone-500">
+                      <div className="text-center py-6 sm:py-8 text-stone-500">
                         <p className="text-xs leading-relaxed">You haven&apos;t registered for any events yet.</p>
                         <Link
                           href="/events"
-                          className="inline-block mt-3 text-xs font-bold text-[#c9a227] hover:underline"
+                          className="inline-flex items-center justify-center min-h-[44px] px-4 py-2 mt-3 text-xs font-bold text-[#c9a227] hover:underline rounded-xl bg-amber-50 border border-amber-100 touch-manipulation"
                         >
                           Browse Events →
                         </Link>
@@ -334,7 +334,7 @@ export default function MemberProfilePage() {
                           <Link
                             key={reg.id}
                             href={reg.event ? `/events/${reg.event.id}` : "/events"}
-                            className="block p-4 rounded-2xl border border-stone-100 bg-stone-50/50 hover:bg-stone-50 transition-colors"
+                            className="block p-4 rounded-2xl border border-stone-100 bg-stone-50/50 hover:bg-stone-50 active:bg-stone-100 transition-colors min-h-[44px] touch-manipulation"
                           >
                             <h4 className="font-serif text-sm font-bold text-[#1e3a5f]">
                               {reg.event?.title ?? "Event"}
@@ -355,7 +355,7 @@ export default function MemberProfilePage() {
                     )}
                   </div>
 
-                  <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200">
+                  <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-stone-200">
                     <div className="flex items-center gap-3 mb-4 pb-3 border-b border-stone-100">
                       <div className="h-9 w-9 rounded-xl flex items-center justify-center bg-blue-50 text-[#1e3a5f] shrink-0 border border-blue-100">
                         ⛪
@@ -367,11 +367,11 @@ export default function MemberProfilePage() {
                     </div>
 
                     {memberMinistries.length === 0 ? (
-                      <div className="text-center py-8 text-stone-500">
+                      <div className="text-center py-6 sm:py-8 text-stone-500">
                         <p className="text-xs leading-relaxed text-stone-500">You haven&apos;t joined any ministries yet.</p>
                         <Link
                           href="/ministries"
-                          className="inline-block mt-3 text-xs font-bold text-[#c9a227] hover:underline"
+                          className="inline-flex items-center justify-center min-h-[44px] px-4 py-2 mt-3 text-xs font-bold text-[#c9a227] hover:underline rounded-xl bg-amber-50 border border-amber-100 touch-manipulation"
                         >
                           Find a Ministry →
                         </Link>
@@ -379,12 +379,12 @@ export default function MemberProfilePage() {
                     ) : (
                       <div className="space-y-3">
                         {memberMinistries.map((ministry) => (
-                          <div key={ministry.id} className="p-4 rounded-2xl border border-stone-100 bg-stone-50/50 hover:bg-stone-50 transition-colors">
+                          <div key={ministry.id} className="p-4 rounded-2xl border border-stone-100 bg-stone-50/50">
                             <h4 className="font-serif text-sm font-bold text-[#1e3a5f]">{ministry.name}</h4>
                             <p className="text-[9px] text-[#c9a227] font-semibold mt-0.5">Leader: {ministry.leader}</p>
                             <Link
                               href="/ministries"
-                              className="inline-flex items-center gap-1 mt-3 text-[10px] font-bold text-[#1e3a5f] hover:underline"
+                              className="inline-flex items-center gap-1 mt-3 min-h-[44px] px-3 py-2 text-[10px] font-bold text-[#1e3a5f] hover:underline rounded-lg bg-white border border-stone-200 touch-manipulation"
                             >
                               Go to Ministry
                               <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -403,7 +403,7 @@ export default function MemberProfilePage() {
             {/* 💝 GIVING TAB */}
             {activeTab === "giving" && (
               <div className="max-w-2xl mx-auto">
-                <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-stone-200">
+                <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-sm border border-stone-200">
                   <div className="flex items-center gap-3 mb-6 pb-4 border-b border-stone-100">
                     <div className="h-10 w-10 rounded-xl flex items-center justify-center bg-amber-50 text-amber-600 text-xl border border-amber-100 shadow-inner">
                       💝
@@ -429,10 +429,10 @@ export default function MemberProfilePage() {
                     {/* Amount field */}
                     <div>
                       <label className="block text-xs font-bold text-stone-600 mb-2 uppercase tracking-wider">
-                        Offering Amount ($)
+                        Offering Amount (GHS)
                       </label>
                       <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 font-bold text-lg">$</span>
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 font-bold text-sm">GHS</span>
                         <input
                           type="number"
                           required
@@ -441,7 +441,7 @@ export default function MemberProfilePage() {
                           value={givingAmount}
                           onChange={(e) => setGivingAmount(e.target.value)}
                           placeholder="0.00"
-                          className="w-full pl-9 pr-4 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]/30 focus:border-[#1e3a5f] text-base font-medium text-stone-800"
+                          className="w-full pl-14 pr-4 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]/30 focus:border-[#1e3a5f] text-base font-medium text-stone-800"
                         />
                       </div>
 
@@ -452,9 +452,9 @@ export default function MemberProfilePage() {
                             key={amt}
                             type="button"
                             onClick={() => setGivingAmount(amt.toString())}
-                            className="px-4 py-2 text-xs font-bold rounded-lg border border-stone-200 hover:border-[#1e3a5f] hover:bg-stone-50 text-stone-600 transition-colors cursor-pointer"
+                            className="flex-1 min-w-[calc(33%-0.5rem)] sm:flex-none sm:min-w-0 px-3 sm:px-4 py-2.5 sm:py-2 text-xs font-bold rounded-lg border border-stone-200 hover:border-[#1e3a5f] hover:bg-stone-50 active:bg-stone-100 text-stone-600 transition-colors cursor-pointer min-h-[44px] touch-manipulation"
                           >
-                            ${amt}
+                            GHS {amt}
                           </button>
                         ))}
                       </div>
@@ -487,7 +487,7 @@ export default function MemberProfilePage() {
                     <button
                       type="submit"
                       disabled={givingStatus === "loading"}
-                      className="w-full py-3.5 rounded-xl bg-[#1e3a5f] hover:bg-[#2a5082] text-white text-sm font-bold tracking-wide transition-colors cursor-pointer shadow-md disabled:opacity-60"
+                      className="w-full py-3.5 rounded-xl bg-[#1e3a5f] hover:bg-[#2a5082] text-white text-sm font-bold tracking-wide transition-colors cursor-pointer shadow-md disabled:opacity-60 min-h-[48px] touch-manipulation"
                     >
                       {givingStatus === "loading" ? "Processing Offering..." : "Submit Offering"}
                     </button>
@@ -498,9 +498,9 @@ export default function MemberProfilePage() {
 
             {/* 📝 INTERACT TAB (PRAYER & TESTIMONY) */}
             {activeTab === "interact" && (
-              <div className="grid md:grid-cols-2 gap-8 items-start">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 items-start">
                 {/* Prayer Request Form */}
-                <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200 flex flex-col h-full">
+                <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-stone-200 flex flex-col">
                   <div className="flex items-center gap-3 mb-4 pb-3 border-b border-stone-100">
                     <div className="h-10 w-10 rounded-xl flex items-center justify-center bg-blue-50 text-blue-600 text-xl border border-blue-100 shadow-inner">
                       🙏
@@ -535,7 +535,7 @@ export default function MemberProfilePage() {
                       <button
                         type="submit"
                         disabled={prayerStatus === "loading"}
-                        className="w-full py-2.5 rounded-xl bg-[#1e3a5f] text-white text-xs font-semibold hover:bg-[#2a5082] transition-colors disabled:opacity-60 cursor-pointer shadow-sm"
+                        className="w-full py-3 rounded-xl bg-[#1e3a5f] text-white text-xs font-semibold hover:bg-[#2a5082] transition-colors disabled:opacity-60 cursor-pointer shadow-sm min-h-[48px] touch-manipulation"
                       >
                         {prayerStatus === "loading" ? "Submitting..." : "Submit Prayer Request"}
                       </button>
@@ -544,7 +544,7 @@ export default function MemberProfilePage() {
                 </div>
 
                 {/* Share Testimony Form */}
-                <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-200 flex flex-col h-full">
+                <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-stone-200 flex flex-col">
                   <div className="flex items-center gap-3 mb-4 pb-3 border-b border-stone-100">
                     <div className="h-10 w-10 rounded-xl flex items-center justify-center bg-amber-50 text-amber-600 text-xl border border-amber-100 shadow-inner">
                       ✨
@@ -574,7 +574,7 @@ export default function MemberProfilePage() {
                         <label className="block text-[10px] font-bold text-stone-500 mb-2 uppercase tracking-wider">
                           Attach a Photo (optional, max 5MB)
                         </label>
-                        <label className="flex items-center gap-2.5 cursor-pointer p-3 rounded-xl border border-dashed border-stone-300 hover:border-[#c9a227] hover:bg-amber-50/10 transition-colors group">
+                        <label className="flex items-center gap-2.5 cursor-pointer p-3 rounded-xl border border-dashed border-stone-300 hover:border-[#c9a227] hover:bg-amber-50/10 active:bg-amber-50/20 transition-colors group min-h-[48px] touch-manipulation">
                           <span className="text-xl">🖼️</span>
                           <span className="text-xs text-stone-500 group-hover:text-[#c9a227] transition-colors">
                             {testimonyImage ? "Change attached photo" : "Select photo file..."}
@@ -615,7 +615,7 @@ export default function MemberProfilePage() {
                       <button
                         type="submit"
                         disabled={testimonyStatus === "loading"}
-                        className="w-full py-2.5 rounded-xl bg-[#c9a227] hover:bg-[#b8911f] text-white text-xs font-semibold transition-colors disabled:opacity-60 cursor-pointer shadow-sm"
+                        className="w-full py-3 rounded-xl bg-[#c9a227] hover:bg-[#b8911f] text-white text-xs font-semibold transition-colors disabled:opacity-60 cursor-pointer shadow-sm min-h-[48px] touch-manipulation"
                       >
                         {testimonyStatus === "loading" ? "Sharing..." : "Share Testimony"}
                       </button>
@@ -627,21 +627,21 @@ export default function MemberProfilePage() {
 
             {/* 📋 GIVING HISTORY TAB */}
             {activeTab === "history" && (
-              <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-stone-200">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-stone-100">
+              <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-sm border border-stone-200">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6 pb-4 border-b border-stone-100">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl flex items-center justify-center bg-amber-50 text-amber-600 text-xl border border-amber-100 shadow-inner">
+                    <div className="h-10 w-10 rounded-xl flex items-center justify-center bg-amber-50 text-amber-600 text-xl border border-amber-100 shadow-inner shrink-0">
                       📋
                     </div>
                     <div>
-                      <h3 className="font-serif text-lg font-bold text-[#1e3a5f]">Giving History</h3>
+                      <h3 className="font-serif text-base sm:text-lg font-bold text-[#1e3a5f]">Giving History</h3>
                       <p className="text-xs text-stone-500">Your faithful financial stewardship</p>
                     </div>
                   </div>
-                  <div className="bg-stone-50 border border-stone-200 px-4 py-2.5 rounded-2xl flex items-center gap-2 shrink-0">
+                  <div className="bg-stone-50 border border-stone-200 px-4 py-2.5 rounded-2xl flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto">
                     <span className="text-xs text-stone-500 font-semibold">Total Contributed:</span>
                     <span className="font-serif text-base font-bold text-[#1e3a5f]">
-                      ${donations.reduce((acc, d) => acc + d.amount, 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      GHS {donations.reduce((acc, d) => acc + d.amount, 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </span>
                   </div>
                 </div>
@@ -649,54 +649,79 @@ export default function MemberProfilePage() {
                 {loadingDonations ? (
                   <div className="text-center py-10 text-stone-400 text-sm">Loading giving history...</div>
                 ) : donations.length === 0 ? (
-                  <div className="text-center py-12 text-stone-400 text-sm">
+                  <div className="text-center py-10 sm:py-12 text-stone-400 text-sm">
                     <p className="text-3xl mb-3">💝</p>
                     <p className="font-semibold text-stone-600">No giving history found.</p>
                     <p className="text-stone-400 text-[11px] mt-1">Thank you for considering supporting the church.</p>
                     <button
                       onClick={() => setActiveTab("giving")}
-                      className="mt-4 px-4 py-2 rounded-xl bg-[#1e3a5f] hover:bg-[#2a5082] text-white text-xs font-semibold transition-colors cursor-pointer"
+                      className="mt-4 px-4 py-3 rounded-xl bg-[#1e3a5f] hover:bg-[#2a5082] text-white text-xs font-semibold transition-colors cursor-pointer min-h-[44px] touch-manipulation"
                     >
                       Make a Contribution
                     </button>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                      <thead>
-                        <tr className="border-b border-stone-200 text-stone-500 text-[10px] font-bold uppercase tracking-wider">
-                          <th className="py-3 px-4">Date</th>
-                          <th className="py-3 px-4">Donation ID</th>
-                          <th className="py-3 px-4">Method</th>
-                          <th className="py-3 px-4 text-right">Amount</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-stone-100 text-xs text-stone-600">
-                        {donations.map((d) => (
-                          <tr key={d.id} className="hover:bg-stone-50/50 transition-colors">
-                            <td className="py-3 px-4 font-semibold">
-                              {new Date(d.date).toLocaleDateString("en-GB", {
-                                day: "numeric",
-                                month: "short",
-                                year: "numeric",
-                              })}
-                            </td>
-                            <td className="py-3 px-4 font-mono text-[10px] text-stone-400">
-                              {d.id.substring(0, 8)}...
-                            </td>
-                            <td className="py-3 px-4">
-                              <span className="px-2.5 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-stone-600 text-[10px] font-medium">
-                                {d.paymentMethod}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4 text-right font-serif font-bold text-[#1e3a5f]">
-                              ${d.amount.toFixed(2)}
-                            </td>
+                  <>
+                    {/* Mobile cards */}
+                    <div className="space-y-3 md:hidden">
+                      {donations.map((d) => (
+                        <div key={d.id} className="rounded-xl border border-stone-200 p-4 bg-stone-50/50">
+                          <div className="flex items-center justify-between gap-3 mb-2">
+                            <p className="font-serif font-bold text-[#1e3a5f]">GHS {d.amount.toFixed(2)}</p>
+                            <span className="px-2.5 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-stone-600 text-[10px] font-medium">
+                              {d.paymentMethod}
+                            </span>
+                          </div>
+                          <p className="text-xs text-stone-500">
+                            {new Date(d.date).toLocaleDateString("en-GB", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            })}
+                          </p>
+                          <p className="text-[10px] font-mono text-stone-400 mt-1">ID: {d.id.substring(0, 8)}...</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Desktop table */}
+                    <div className="hidden md:block overflow-x-auto">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="border-b border-stone-200 text-stone-500 text-[10px] font-bold uppercase tracking-wider">
+                            <th className="py-3 px-4">Date</th>
+                            <th className="py-3 px-4">Donation ID</th>
+                            <th className="py-3 px-4">Method</th>
+                            <th className="py-3 px-4 text-right">Amount</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody className="divide-y divide-stone-100 text-xs text-stone-600">
+                          {donations.map((d) => (
+                            <tr key={d.id} className="hover:bg-stone-50/50 transition-colors">
+                              <td className="py-3 px-4 font-semibold">
+                                {new Date(d.date).toLocaleDateString("en-GB", {
+                                  day: "numeric",
+                                  month: "short",
+                                  year: "numeric",
+                                })}
+                              </td>
+                              <td className="py-3 px-4 font-mono text-[10px] text-stone-400">
+                                {d.id.substring(0, 8)}...
+                              </td>
+                              <td className="py-3 px-4">
+                                <span className="px-2.5 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-stone-600 text-[10px] font-medium">
+                                  {d.paymentMethod}
+                                </span>
+                              </td>
+                              <td className="py-3 px-4 text-right font-serif font-bold text-[#1e3a5f]">
+                                GHS {d.amount.toFixed(2)}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
                 )}
               </div>
             )}
