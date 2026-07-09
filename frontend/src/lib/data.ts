@@ -14,6 +14,7 @@ export const churchInfo = {
     facebook: "https://facebook.com",
     youtube: "https://youtube.com",
     instagram: "https://instagram.com",
+    tiktok: "https://tiktok.com",
   },
 };
 

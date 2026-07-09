@@ -17,7 +17,10 @@ const playfair = Playfair_Display({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#1e3a5f",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#1e3a5f" },
+    { media: "(prefers-color-scheme: dark)", color: "#1e3a5f" },
+  ],
   colorScheme: "light",
 };
 
@@ -32,7 +35,7 @@ export const metadata: Metadata = {
     icon: "/favicon.png",
   },
   other: {
-    "color-scheme": "light only",
+    "color-scheme": "only light",
     "supported-color-schemes": "light",
   },
 };
@@ -46,9 +49,22 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} ${playfair.variable} h-full antialiased`}
-      style={{ colorScheme: "light only" }}
+      style={{ colorScheme: "only light" }}
+      data-theme="light"
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-[hsl(30,7%,97%)] text-[hsl(24,5%,11%)]">
+      <head>
+        <meta name="color-scheme" content="only light" />
+        <meta name="theme-color" content="#1e3a5f" />
+        <meta name="supported-color-schemes" content="light" />
+        <style
+          dangerouslySetInnerHTML={{
+            __html:
+              "html,body{background-color:#f8f7f5!important;color:#1c1917!important;color-scheme:only light!important}",
+          }}
+        />
+      </head>
+      <body className="min-h-full flex flex-col bg-[#f8f7f5] text-[#1c1917]">
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
