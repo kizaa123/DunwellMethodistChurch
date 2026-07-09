@@ -71,33 +71,31 @@ export default function AdminPrayerRequestsPage() {
           <p className="text-xs text-stone-400 mt-1">When members submit requests in their portal, they will show up here.</p>
         </div>
       ) : (
-        <div className="grid gap-4">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {requests.map((req) => (
             <div
               key={req.id}
-              className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-stone-200 flex flex-col gap-4"
+              className="bg-white rounded-xl p-3 shadow-sm border border-stone-200 flex flex-col gap-2.5 max-w-full"
             >
-              <div className="space-y-2 flex-1">
-                <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
-                  <span className="font-semibold text-sm text-[#1e3a5f]">{req.memberName}</span>
-                  <span className="text-xs text-stone-400 break-all">({req.email})</span>
-                  <span className="text-[10px] text-stone-400 sm:ml-auto">
-                    Submitted {new Date(req.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+              <div className="space-y-1.5 flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                  <span className="font-semibold text-xs text-[#1e3a5f] truncate max-w-[10rem]">{req.memberName}</span>
+                  <span className="text-[10px] text-stone-400 truncate max-w-[12rem]">{req.email}</span>
+                  <span className="text-[9px] text-stone-400 ml-auto shrink-0">
+                    {new Date(req.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                   </span>
                 </div>
-                <p className="text-xs text-stone-700 whitespace-pre-line leading-relaxed italic bg-stone-50 p-4 rounded-xl border border-stone-100">
+                <p className="text-[11px] text-stone-700 whitespace-pre-line leading-snug italic bg-stone-50 p-2.5 rounded-lg border border-stone-100 max-h-20 overflow-y-auto line-clamp-4">
                   &ldquo;{req.request}&rdquo;
                 </p>
               </div>
 
-              <div className="w-full sm:w-auto sm:self-end shrink-0">
-                <button
-                  onClick={() => handleDelete(req.id)}
-                  className="w-full sm:w-auto px-3.5 py-2 sm:py-1.5 rounded-lg border border-red-200 text-red-600 text-xs font-semibold hover:bg-red-50 transition-colors cursor-pointer"
-                >
-                  Delete Request
-                </button>
-              </div>
+              <button
+                onClick={() => handleDelete(req.id)}
+                className="w-full px-3 py-1.5 rounded-lg border border-red-200 text-red-600 text-[10px] font-semibold hover:bg-red-50 transition-colors cursor-pointer"
+              >
+                Delete
+              </button>
             </div>
           ))}
         </div>

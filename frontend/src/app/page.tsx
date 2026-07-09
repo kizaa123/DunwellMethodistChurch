@@ -77,7 +77,7 @@ export default async function HomePage() {
             <div>
               <p
                 className="text-xs font-semibold tracking-widest uppercase mb-3"
-                style={{ color: "hsl(41,74%,47%)" }}
+                style={{ color: "#c9a227" }}
               >
                 Who We Are
               </p>
@@ -89,7 +89,7 @@ export default async function HomePage() {
               </h2>
               <div
                 className="h-1 w-12 rounded-full mb-6"
-                style={{ background: "linear-gradient(90deg, hsl(41,74%,47%), hsl(41,74%,60%))" }}
+                style={{ background: "linear-gradient(90deg, #c9a227, #e2c04e)" }}
               />
               <p className="leading-relaxed mb-4" style={{ color: "hsl(24,5%,40%)" }}>
                 At {churchInfo.name}, we believe in the transformative power of God&apos;s love.
@@ -102,7 +102,7 @@ export default async function HomePage() {
               </p>
               <Link
                 href="/about"
-                className="inline-flex items-center gap-2 font-semibold transition-all duration-150 hover:gap-3 text-[hsl(212,51%,24%)] hover:text-[hsl(41,74%,47%)]"
+                className="inline-flex items-center gap-2 font-semibold transition-all duration-150 hover:gap-3 text-[hsl(212,51%,24%)] hover:text-[#c9a227]"
               >
                 Learn more about us
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -143,7 +143,7 @@ export default async function HomePage() {
               {/* Glow orb */}
               <div
                 className="absolute -top-10 -right-10 w-64 h-64 rounded-full blur-3xl opacity-20"
-                style={{ background: "hsl(41,74%,47%)" }}
+                style={{ background: "#c9a227" }}
               />
 
               <div className="absolute inset-0 flex flex-col items-center justify-center text-white px-8 text-center">
@@ -158,7 +158,7 @@ export default async function HomePage() {
                 </p>
                 <p
                   className="mt-4 text-sm font-medium tracking-wider uppercase"
-                  style={{ color: "hsl(41,74%,60%)" }}
+                  style={{ color: "#e2c04e" }}
                 >
                   — Methodist Church
                 </p>
@@ -197,7 +197,7 @@ export default async function HomePage() {
         />
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-48 rounded-full blur-3xl opacity-10"
-          style={{ background: "hsl(41,74%,47%)" }}
+          style={{ background: "#c9a227" }}
         />
 
         <QuoteCarousel />
@@ -209,7 +209,7 @@ export default async function HomePage() {
           <div className="text-center mb-14">
             <p
               className="text-xs font-semibold tracking-widest uppercase mb-3"
-              style={{ color: "hsl(41,74%,47%)" }}
+              style={{ color: "#c9a227" }}
             >
               Latest Message
             </p>
@@ -239,7 +239,7 @@ export default async function HomePage() {
             <div>
               <p
                 className="text-xs font-semibold tracking-widest uppercase mb-3"
-                style={{ color: "hsl(41,74%,47%)" }}
+                style={{ color: "#c9a227" }}
               >
                 What&apos;s Happening
               </p>
@@ -255,7 +255,7 @@ export default async function HomePage() {
               className="text-sm font-semibold transition-colors"
               style={{ color: "hsl(212,51%,24%)" }}
             >
-              See full calendar →
+              See full calendar
             </Link>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 animate-stagger">
@@ -274,7 +274,7 @@ export default async function HomePage() {
           <div className="text-center mb-14">
             <p
               className="text-xs font-semibold tracking-widest uppercase mb-3"
-              style={{ color: "hsl(41,74%,47%)" }}
+              style={{ color: "#c9a227" }}
             >
               Life at Dunwell
             </p>
@@ -295,7 +295,7 @@ export default async function HomePage() {
         className="py-24 relative overflow-hidden"
         style={{
           background:
-            "linear-gradient(135deg, hsl(41,74%,44%) 0%, hsl(41,74%,52%) 50%, hsl(41,60%,40%) 100%)",
+            "linear-gradient(135deg, #c09520 0%, #cdb22f 50%, #a68f2a 100%)",
         }}
       >
         {/* Decorative orbs */}

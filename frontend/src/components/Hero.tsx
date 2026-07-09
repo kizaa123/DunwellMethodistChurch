@@ -78,7 +78,7 @@ export default function Hero() {
         {/* Badge */}
         <div className="inline-flex items-center gap-2 mb-4 sm:mb-6 px-3 sm:px-4 py-1.5 rounded-full text-white/90 text-[10px] sm:text-sm font-medium tracking-wider uppercase"
           style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.2)" }}>
-          <span className="inline-block w-2 h-2 rounded-full animate-pulse shrink-0" style={{ background: "hsl(41, 74%, 57%)" }} />
+          <span className="inline-block w-2 h-2 rounded-full animate-pulse shrink-0" style={{ background: "#dcc04a" }} />
           Welcome to our community
         </div>
 
@@ -87,7 +87,7 @@ export default function Hero() {
           {slides[current].headline}
         </h1>
 
-        <div className="mx-auto mb-4 sm:mb-6 h-1 w-16 sm:w-20 rounded-full" style={{ background: "linear-gradient(90deg, hsl(41,74%,47%), hsl(41,74%,60%))" }} />
+        <div className="mx-auto mb-4 sm:mb-6 h-1 w-16 sm:w-20 rounded-full" style={{ background: "linear-gradient(90deg, #c9a227, #e2c04e)" }} />
 
         <p className="text-sm sm:text-lg md:text-xl text-blue-100 max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed text-balance transition-all duration-700 px-1">
           {slides[current].sub}
@@ -112,7 +112,7 @@ export default function Hero() {
               className="rounded-xl sm:rounded-2xl p-4 sm:p-5 text-left"
               style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.18)" }}
             >
-              <p className="font-semibold text-xs sm:text-sm mb-1 uppercase tracking-wider" style={{ color: "hsl(41, 74%, 65%)" }}>
+              <p className="font-semibold text-xs sm:text-sm mb-1 uppercase tracking-wider" style={{ color: "#e8cc66" }}>
                 {service.day}
               </p>
               <p className="text-white font-bold text-base sm:text-lg leading-tight">{service.time}</p>
@@ -121,7 +121,7 @@ export default function Hero() {
           ))}
           <div className="rounded-xl sm:rounded-2xl p-4 sm:p-5 text-left sm:col-span-2 lg:col-span-1"
             style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.18)" }}>
-            <p className="font-semibold text-xs sm:text-sm mb-1 uppercase tracking-wider" style={{ color: "hsl(41, 74%, 65%)" }}>Location</p>
+            <p className="font-semibold text-xs sm:text-sm mb-1 uppercase tracking-wider" style={{ color: "#e8cc66" }}>Location</p>
             <p className="text-white font-bold text-sm sm:text-base leading-tight">{churchInfo.address.split(",")[0]}</p>
             <p className="text-blue-200 text-[11px] sm:text-xs mt-1">All are welcome</p>
           </div>
@@ -161,7 +161,7 @@ export default function Hero() {
             style={{
               width: i === current ? "28px" : "8px",
               height: "8px",
-              background: i === current ? "hsl(41,74%,57%)" : "rgba(255,255,255,0.4)",
+              background: i === current ? "#dcc04a" : "rgba(255,255,255,0.4)",
             }}
           />
         ))}

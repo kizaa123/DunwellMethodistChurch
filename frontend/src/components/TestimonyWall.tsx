@@ -64,7 +64,7 @@ export default function TestimonyWall({ testimonies, fullscreen = false }: Props
           ) : (
             <div
               className="w-14 sm:w-16 shrink-0 h-full flex items-center justify-center text-white font-bold text-sm"
-              style={{ background: "linear-gradient(135deg, hsl(41,74%,47%), hsl(41,74%,35%))" }}
+              style={{ background: "linear-gradient(135deg, #c9a227, #a67f1a)" }}
             >
               {t.memberName.charAt(0).toUpperCase()}
             </div>
@@ -75,7 +75,7 @@ export default function TestimonyWall({ testimonies, fullscreen = false }: Props
             <p className="text-[11px] sm:text-xs text-white/90 leading-snug line-clamp-2">
               {t.testimony}
             </p>
-            <p className="text-[9px] sm:text-[10px] text-amber-400/80 font-medium truncate mt-1">
+            <p className="text-[9px] sm:text-[10px] text-[#e2c04e]/80 font-medium truncate mt-1">
               {t.memberName}
             </p>
           </div>
@@ -95,7 +95,7 @@ export default function TestimonyWall({ testimonies, fullscreen = false }: Props
                 style={{
                   width: i === active ? "1.25rem" : "0.35rem",
                   height: "0.35rem",
-                  background: i === active ? "hsl(41,74%,60%)" : "rgba(255,255,255,0.25)",
+                  background: i === active ? "#e2c04e" : "rgba(255,255,255,0.25)",
                 }}
                 aria-label={`Testimony ${i + 1}`}
               />
@@ -119,24 +119,24 @@ export default function TestimonyWall({ testimonies, fullscreen = false }: Props
   return (
     <section
       className="py-16 relative overflow-hidden"
-      style={{ background: "linear-gradient(135deg, hsl(212,51%,14%) 0%, hsl(212,51%,22%) 60%, hsl(41,60%,20%) 100%)" }}
+      style={{ background: "linear-gradient(135deg, hsl(212,51%,14%) 0%, hsl(212,51%,22%) 60%, #524618 100%)" }}
     >
       {/* Decorative orb */}
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-10 pointer-events-none"
-        style={{ background: "radial-gradient(circle, hsl(41,74%,60%), transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, #e2c04e, transparent 70%)" }}
       />
 
       <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <p className="text-xs font-bold tracking-[0.2em] uppercase mb-3" style={{ color: "hsl(41,74%,60%)" }}>
+          <p className="text-xs font-bold tracking-[0.2em] uppercase mb-3" style={{ color: "#e2c04e" }}>
             ✨ Testimonies
           </p>
           <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white mb-3">
             Lives Transformed by Grace
           </h2>
-          <div className="h-0.5 w-12 mx-auto rounded-full" style={{ background: "hsl(41,74%,47%)" }} />
+          <div className="h-0.5 w-12 mx-auto rounded-full" style={{ background: "#c9a227" }} />
         </div>
 
         {/* Compact testimony card — side thumbnail + text */}
@@ -167,7 +167,7 @@ export default function TestimonyWall({ testimonies, fullscreen = false }: Props
             {/* Text content */}
             <div className="flex-1 p-3.5 sm:p-4 flex flex-col justify-between min-w-0">
               <div>
-                <div className="font-serif text-3xl leading-none mb-1" style={{ color: "hsl(41,74%,47%)", opacity: 0.7 }}>
+                <div className="font-serif text-3xl leading-none mb-1" style={{ color: "#c9a227", opacity: 0.7 }}>
                   &ldquo;
                 </div>
                 <p className="text-white/90 text-xs sm:text-[13px] leading-relaxed line-clamp-3 font-light">
@@ -177,7 +177,7 @@ export default function TestimonyWall({ testimonies, fullscreen = false }: Props
               <div className="flex items-center gap-2 mt-3">
                 <div
                   className="h-6 w-6 rounded-full flex items-center justify-center text-white font-bold text-[10px] shrink-0"
-                  style={{ background: "linear-gradient(135deg, hsl(41,74%,47%), hsl(41,74%,35%))" }}
+                  style={{ background: "linear-gradient(135deg, #c9a227, #a67f1a)" }}
                 >
                   {t.memberName.charAt(0).toUpperCase()}
                 </div>
@@ -205,7 +205,7 @@ export default function TestimonyWall({ testimonies, fullscreen = false }: Props
                   style={{
                     width: i === active ? "1.75rem" : "0.4rem",
                     height: "0.4rem",
-                    background: i === active ? "hsl(41,74%,60%)" : "rgba(255,255,255,0.3)",
+                    background: i === active ? "#e2c04e" : "rgba(255,255,255,0.3)",
                   }}
                   aria-label={`View testimony ${i + 1}`}
                 />

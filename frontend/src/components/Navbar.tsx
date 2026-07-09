@@ -125,7 +125,7 @@ export default function Navbar() {
                   {active && (
                     <span
                       className="absolute bottom-0.5 left-1/2 -translate-x-1/2 h-0.5 w-4 rounded-full"
-                      style={{ background: "hsl(41,74%,47%)" }}
+                      style={{ background: "#c9a227" }}
                     />
                   )}
                 </Link>
@@ -183,7 +183,7 @@ export default function Navbar() {
                   {active && (
                     <span
                       className="inline-block w-1.5 h-1.5 rounded-full mr-2 flex-shrink-0"
-                      style={{ background: "hsl(41,74%,47%)" }}
+                      style={{ background: "#c9a227" }}
                     />
                   )}
                   {link.label}

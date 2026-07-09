@@ -26,11 +26,13 @@ export default function SermonCard({ sermon }: SermonCardProps) {
     year: "numeric",
   });
 
+  const sermonHref = isLive ? "/live" : `/sermons/${sermon.id}`;
+
   return (
     <article className="card card-elevated overflow-hidden flex flex-col h-full group">
       {/* Thumbnail */}
       <Link
-        href={`/sermons/${sermon.id}`}
+        href={sermonHref}
         className="block relative aspect-video overflow-hidden bg-stone-100"
       >
         {sermon.thumbnail ? (
@@ -94,7 +96,7 @@ export default function SermonCard({ sermon }: SermonCardProps) {
           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
             <p
               className="text-xs font-semibold uppercase tracking-wider"
-              style={{ color: "hsl(41,74%,47%)" }}
+              style={{ color: "#c9a227" }}
             >
               {formattedDate}
             </p>
@@ -106,7 +108,7 @@ export default function SermonCard({ sermon }: SermonCardProps) {
             )}
           </div>
 
-          <Link href={`/sermons/${sermon.id}`}>
+          <Link href={sermonHref}>
             <h3
               className="font-serif text-lg font-semibold mb-1 leading-snug transition-colors duration-150 group-hover:underline"
               style={{ color: "hsl(212,51%,24%)" }}
@@ -127,7 +129,7 @@ export default function SermonCard({ sermon }: SermonCardProps) {
           style={{ borderColor: "hsl(30,5%,91%)" }}
         >
           <Link
-            href={`/sermons/${sermon.id}`}
+            href={sermonHref}
             className="text-xs px-3 py-1.5 rounded-full font-semibold text-white transition-all duration-150 hover:opacity-90 hover:shadow-sm flex items-center gap-1"
             style={{ background: isLive ? "hsl(0,72%,42%)" : "hsl(212,51%,24%)" }}
           >

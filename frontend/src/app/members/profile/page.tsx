@@ -205,7 +205,7 @@ export default function MemberProfilePage() {
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5">
                     <h2 className="font-serif text-xl sm:text-2xl font-bold break-words">{user.name}</h2>
-                    <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] font-bold tracking-wider uppercase">
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#c9a227]/20 border border-[#c9a227]/40 text-[#e8cc66] text-[10px] font-bold tracking-wider uppercase">
                       {user.role}
                     </span>
                   </div>
@@ -280,7 +280,7 @@ export default function MemberProfilePage() {
                           <div key={ann.id} className="relative rounded-2xl border border-stone-150 p-5 bg-stone-50/40">
                             <div
                               className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl"
-                              style={{ background: i === 0 ? "hsl(41,74%,47%)" : "hsl(212,51%,35%)" }}
+                              style={{ background: i === 0 ? "#c9a227" : "hsl(212,51%,35%)" }}
                             />
                             <div className="pl-3">
                               <div className="flex items-start justify-between gap-3 mb-1.5">
@@ -325,7 +325,7 @@ export default function MemberProfilePage() {
                           href="/events"
                           className="inline-flex items-center justify-center min-h-[44px] px-4 py-2 mt-3 text-xs font-bold text-[#c9a227] hover:underline rounded-xl bg-amber-50 border border-amber-100 touch-manipulation"
                         >
-                          Browse Events →
+                          Browse Events
                         </Link>
                       </div>
                     ) : (
@@ -373,7 +373,7 @@ export default function MemberProfilePage() {
                           href="/ministries"
                           className="inline-flex items-center justify-center min-h-[44px] px-4 py-2 mt-3 text-xs font-bold text-[#c9a227] hover:underline rounded-xl bg-amber-50 border border-amber-100 touch-manipulation"
                         >
-                          Find a Ministry →
+                          Find a Ministry
                         </Link>
                       </div>
                     ) : (
@@ -574,7 +574,7 @@ export default function MemberProfilePage() {
                         <label className="block text-[10px] font-bold text-stone-500 mb-2 uppercase tracking-wider">
                           Attach a Photo (optional, max 5MB)
                         </label>
-                        <label className="flex items-center gap-2.5 cursor-pointer p-3 rounded-xl border border-dashed border-stone-300 hover:border-[#c9a227] hover:bg-amber-50/10 active:bg-amber-50/20 transition-colors group min-h-[48px] touch-manipulation">
+                        <label className="flex items-center gap-2.5 cursor-pointer p-3 rounded-xl border border-dashed border-stone-300 hover:border-[#c9a227] hover:bg-[#fdf8ec]/10 active:bg-[#fdf8ec]/20 transition-colors group min-h-[48px] touch-manipulation">
                           <span className="text-xl">🖼️</span>
                           <span className="text-xs text-stone-500 group-hover:text-[#c9a227] transition-colors">
                             {testimonyImage ? "Change attached photo" : "Select photo file..."}

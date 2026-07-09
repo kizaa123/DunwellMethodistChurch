@@ -85,7 +85,7 @@ export default function EventCard({ event }: EventCardProps) {
       <div className="flex flex-col flex-1 p-5">
         {/* Weekday + live status */}
         <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest mb-2"
-          style={{ color: isLive ? "hsl(0,72%,42%)" : "hsl(41,74%,44%)" }}
+          style={{ color: isLive ? "hsl(0,72%,42%)" : "#c09520" }}
         >
           <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -128,7 +128,7 @@ export default function EventCard({ event }: EventCardProps) {
             }`}
           >
             {isLive && <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse inline-block" />}
-            {isLive ? "Join Now" : "Details →"}
+            {isLive ? "Join Now" : "Details"}
           </Link>
         </div>
       </div>

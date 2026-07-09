@@ -28,7 +28,7 @@ export default function Footer() {
       {/* Ambient glow */}
       <div
         className="absolute bottom-0 right-0 w-96 h-96 rounded-full blur-3xl opacity-[0.06] pointer-events-none"
-        style={{ background: "hsl(41,74%,47%)" }}
+        style={{ background: "#c9a227" }}
       />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-10">
@@ -116,7 +116,7 @@ export default function Footer() {
           <div>
             <h4
               className="font-semibold text-sm uppercase tracking-wider mb-5"
-              style={{ color: "hsl(41,74%,60%)" }}
+              style={{ color: "#e2c04e" }}
             >
               Quick Links
             </h4>
@@ -148,7 +148,7 @@ export default function Footer() {
           <div>
             <h4
               className="font-semibold text-sm uppercase tracking-wider mb-5"
-              style={{ color: "hsl(41,74%,60%)" }}
+              style={{ color: "#e2c04e" }}
             >
               Service Times
             </h4>
@@ -168,7 +168,7 @@ export default function Footer() {
           <div>
             <h4
               className="font-semibold text-sm uppercase tracking-wider mb-5"
-              style={{ color: "hsl(41,74%,60%)" }}
+              style={{ color: "#e2c04e" }}
             >
               Contact Us
             </h4>

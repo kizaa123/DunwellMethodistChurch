@@ -84,79 +84,68 @@ export default function AdminTestimoniesPage() {
           <p className="text-xs text-stone-400 mt-1">When members submit testimonies in their portal, they will show up here for approval.</p>
         </div>
       ) : (
-        <div className="grid gap-6">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {testimonies.map((test) => (
             <div
               key={test.id}
-              className={`bg-white rounded-2xl sm:rounded-3xl shadow-sm border overflow-hidden flex flex-col sm:flex-row transition-all duration-200 ${
+              className={`bg-white rounded-xl shadow-sm border overflow-hidden flex gap-0 transition-all duration-200 max-w-full ${
                 test.approved
-                  ? "border-emerald-100 hover:border-emerald-300 hover:shadow-md"
-                  : "border-stone-200 hover:border-stone-300 hover:shadow-md"
+                  ? "border-emerald-100 hover:border-emerald-300"
+                  : "border-stone-200 hover:border-stone-300"
               }`}
             >
-              {/* Image side column */}
-              <div className="w-full sm:w-44 h-40 sm:h-auto relative shrink-0 bg-stone-50 border-b sm:border-b-0 sm:border-r border-stone-100 flex items-center justify-center">
+              {/* Compact thumbnail */}
+              <div className="w-16 sm:w-[4.5rem] shrink-0 bg-stone-50 border-r border-stone-100 flex items-center justify-center self-stretch">
                 {test.imageUrl ? (
                   <img
                     src={test.imageUrl}
                     alt={test.memberName}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover min-h-[5rem]"
                   />
                 ) : (
-                  <div className="text-stone-300 text-5xl font-serif">👤</div>
+                  <div className="text-stone-300 text-2xl font-serif py-3">👤</div>
                 )}
               </div>
 
-              {/* Content Column */}
-              <div className="p-4 sm:p-6 flex-1 flex flex-col justify-between">
-                <div>
-                  <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between mb-4">
-                    <div>
-                      <h3 className="font-semibold text-base text-[#1e3a5f]">{test.memberName}</h3>
-                      <p className="text-[10px] text-stone-400 mt-0.5">
-                        Submitted {new Date(test.createdAt).toLocaleDateString("en-GB", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit"
-                        })}
-                      </p>
-                    </div>
-                    <div className="self-start sm:self-auto">
-                      {test.approved ? (
-                        <span className="text-[9px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                          Approved &amp; Live
-                        </span>
-                      ) : (
-                        <span className="text-[9px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 animate-pulse">
-                          Pending Approval
-                        </span>
-                      )}
-                    </div>
+              {/* Content */}
+              <div className="p-2.5 sm:p-3 flex-1 min-w-0 flex flex-col justify-between">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-start gap-1.5 mb-1.5">
+                    <h3 className="font-semibold text-xs text-[#1e3a5f] truncate max-w-[8rem]">{test.memberName}</h3>
+                    {test.approved ? (
+                      <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
+                        Live
+                      </span>
+                    ) : (
+                      <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 animate-pulse shrink-0">
+                        Pending
+                      </span>
+                    )}
+                    <span className="text-[9px] text-stone-400 ml-auto shrink-0">
+                      {new Date(test.createdAt).toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "short",
+                      })}
+                    </span>
                   </div>
 
-                  <div className="relative bg-stone-50/70 p-4 rounded-xl border border-stone-100 mb-4 min-h-[90px] flex items-center">
-                    <span className="absolute top-1 left-2 text-2xl text-stone-200 font-serif leading-none">“</span>
-                    <p className="text-xs text-stone-600 italic leading-relaxed pl-3 pr-2 whitespace-pre-line relative z-10">
-                      {test.testimony}
-                    </p>
-                    <span className="absolute bottom-1 right-2 text-2xl text-stone-200 font-serif leading-none">”</span>
-                  </div>
+                  <p className="text-[10px] text-stone-600 italic leading-snug line-clamp-3 whitespace-pre-line bg-stone-50/70 p-2 rounded-lg border border-stone-100">
+                    {test.testimony}
+                  </p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-2 justify-stretch sm:justify-end pt-3 border-t border-stone-100">
+                <div className="flex gap-1.5 justify-end pt-2 mt-1.5 border-t border-stone-100">
                   {!test.approved && (
                     <button
                       onClick={() => handleApprove(test.id)}
-                      className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
+                      className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-semibold transition-colors cursor-pointer"
                     >
-                      ✓ Approve Testimony
+                      Approve
                     </button>
                   )}
                   <button
                     onClick={() => handleDelete(test.id)}
-                    className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 rounded-xl border border-red-200 text-red-600 text-xs font-semibold hover:bg-red-50 transition-colors cursor-pointer"
+                    className="px-2.5 py-1 rounded-lg border border-red-200 text-red-600 text-[10px] font-semibold hover:bg-red-50 transition-colors cursor-pointer"
                   >
                     Delete
                   </button>

@@ -26,7 +26,7 @@ export default function PageHeader({ title, subtitle, badge }: PageHeaderProps) 
       {/* Ambient glow */}
       <div
         className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl opacity-10 pointer-events-none"
-        style={{ background: "hsl(41,74%,47%)" }}
+        style={{ background: "#c9a227" }}
       />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
@@ -35,7 +35,7 @@ export default function PageHeader({ title, subtitle, badge }: PageHeaderProps) 
             className="inline-block text-xs font-semibold uppercase tracking-widest mb-3 px-3 py-1 rounded-full animate-slide-down"
             style={{
               background: "rgba(255,255,255,0.12)",
-              color: "hsl(41,74%,60%)",
+              color: "#e2c04e",
               border: "1px solid rgba(255,255,255,0.15)",
             }}
           >
@@ -61,7 +61,7 @@ export default function PageHeader({ title, subtitle, badge }: PageHeaderProps) 
         <div
           className="mt-5 h-0.5 w-12 rounded-full mx-auto animate-slide-up"
           style={{
-            background: "linear-gradient(90deg, hsl(41,74%,47%), hsl(41,74%,60%))",
+            background: "linear-gradient(90deg, #c9a227, #e2c04e)",
             animationDelay: "140ms",
           }}
         />

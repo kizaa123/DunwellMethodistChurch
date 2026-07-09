@@ -206,7 +206,7 @@ export default function EventDetailPage() {
                 href="/events"
                 className="inline-flex items-center gap-2 text-white/50 hover:text-white/80 text-sm font-medium transition-colors"
               >
-                ← Back to Events
+                Back to Events
               </Link>
             </div>
 
@@ -247,7 +247,7 @@ export default function EventDetailPage() {
                       rel="noopener noreferrer"
                       className="inline-flex px-6 py-3 rounded-full bg-red-600 text-white hover:bg-red-700 font-medium transition-colors"
                     >
-                      ▶ Join Live Stream
+                      Join Live Stream
                     </a>
                   </div>
                 </div>
@@ -312,7 +312,7 @@ export default function EventDetailPage() {
               href="/events"
               className="inline-flex items-center gap-2 text-stone-600 hover:text-[#1e3a5f] text-sm font-medium transition-colors"
             >
-              ← Back to Events List
+              Back to Events List
             </Link>
           </div>
 

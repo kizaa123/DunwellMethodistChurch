@@ -46,7 +46,7 @@ export default function QuoteCarousel() {
         className="inline-flex items-center justify-center w-10 h-10 rounded-full mb-6 mx-auto transition-transform duration-500 hover:rotate-12"
         style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)" }}
       >
-        <svg className="h-5 w-5" style={{ color: "hsl(41,74%,60%)" }} fill="currentColor" viewBox="0 0 24 24">
+        <svg className="h-5 w-5" style={{ color: "#e2c04e" }} fill="currentColor" viewBox="0 0 24 24">
           <path d="M6.5 10h-2v5h2v-5zm6 0h-2v5h2v-5zm8.5 7H2v2h19v-2zm-2.5-7h-2v5h2v-5zM11.5 1L2 6v2h19V6l-9.5-5z" />
         </svg>
       </div>
@@ -72,11 +72,11 @@ export default function QuoteCarousel() {
             </blockquote>
             <div
               className="h-px w-12 mx-auto mb-3"
-              style={{ background: "hsl(41,74%,47%)" }}
+              style={{ background: "#c9a227" }}
             />
             <cite
               className="font-medium not-italic tracking-wider text-xs uppercase"
-              style={{ color: "hsl(41,74%,60%)" }}
+              style={{ color: "#e2c04e" }}
             >
               — {quote.author}
             </cite>
@@ -94,7 +94,7 @@ export default function QuoteCarousel() {
             className="w-2.5 h-1 rounded-full transition-all duration-300 cursor-pointer"
             style={{
               width: i === current ? "16px" : "6px",
-              background: i === current ? "hsl(41,74%,57%)" : "rgba(255,255,255,0.25)",
+              background: i === current ? "#dcc04a" : "rgba(255,255,255,0.25)",
             }}
           />
         ))}
