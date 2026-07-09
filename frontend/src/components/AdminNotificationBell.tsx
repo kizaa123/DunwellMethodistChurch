@@ -69,31 +69,25 @@ function formatTime(iso: string) {
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
 }
 
-function ChurchBellIcon({ className, ringing }: { className?: string; ringing?: boolean }) {
+function NotificationBellIcon({
+  className,
+  ringing,
+  light,
+}: {
+  className?: string;
+  ringing?: boolean;
+  light?: boolean;
+}) {
   return (
-    <svg
-      className={`${className ?? ""} ${ringing ? "animate-[bell-ring_0.9s_ease-in-out_infinite]" : ""}`}
-      viewBox="0 0 24 24"
-      fill="none"
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/notification-bell.png"
+      alt=""
       aria-hidden="true"
-    >
-      <path
-        d="M12 2.5c-2.8 0-5 2-5.2 4.7-.1 1.2-.5 2.3-1.2 3.2L4.8 13.2A2.5 2.5 0 007 16.5h10a2.5 2.5 0 002.2-3.3l-.8-2.8c-.7-.9-1.1-2-1.2-3.2C17 4.5 14.8 2.5 12 2.5z"
-        fill="url(#bellGold)"
-        stroke="#b8911f"
-        strokeWidth="0.6"
-      />
-      <path d="M8.5 17.5h7v1.2a2 2 0 01-2 2h-3a2 2 0 01-2-2v-1.2z" fill="#b8911f" />
-      <circle cx="12" cy="1.2" r="0.9" fill="#d4b23a" />
-      <circle cx="12" cy="14.5" r="1.1" fill="#e8cc66" stroke="#c9a227" strokeWidth="0.4" />
-      <defs>
-        <linearGradient id="bellGold" x1="7" y1="3" x2="17" y2="16" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#e8cc66" />
-          <stop offset="0.45" stopColor="#c9a227" />
-          <stop offset="1" stopColor="#9a7a18" />
-        </linearGradient>
-      </defs>
-    </svg>
+      className={`object-contain ${className ?? ""} ${ringing ? "animate-[bell-ring_0.9s_ease-in-out_infinite]" : ""} ${
+        light ? "brightness-0 invert" : ""
+      }`}
+    />
   );
 }
 
@@ -197,7 +191,7 @@ export default function AdminNotificationBell() {
         }`}
         aria-label={`Notifications${total > 0 ? `, ${total} unread` : ""}`}
       >
-        <ChurchBellIcon className="h-7 w-7" ringing={total > 0 && !open} />
+        <NotificationBellIcon className="h-7 w-7" ringing={total > 0 && !open} />
         {total > 0 && (
           <>
             <span className="absolute inset-0 rounded-xl ring-2 ring-[#c9a227]/30 animate-pulse pointer-events-none" />
@@ -212,7 +206,7 @@ export default function AdminNotificationBell() {
         <div className="absolute right-0 top-full mt-2 w-[min(100vw-2rem,22rem)] bg-white rounded-2xl shadow-2xl border border-stone-200 z-50 overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-stone-100 bg-gradient-to-r from-[#1e3a5f] to-[#2a5082] text-white">
             <div className="flex items-center gap-2">
-              <ChurchBellIcon className="h-6 w-6 shrink-0" />
+              <NotificationBellIcon className="h-6 w-6 shrink-0" light />
               <div>
                 <p className="font-semibold text-sm">Notifications</p>
                 {summary && total > 0 && (

@@ -315,7 +315,7 @@ export class ContactController {
 
   async markRead(req: AuthRequest, res: Response) {
     try {
-      await contactService.markRead(req.params.id);
+      await contactService.markRead(req.params.id as string);
       res.json({ success: true });
     } catch (err) {
       res.status(400).json({ message: err instanceof Error ? err.message : "Failed to mark as read" });
@@ -324,7 +324,7 @@ export class ContactController {
 
   async delete(req: AuthRequest, res: Response) {
     try {
-      await contactService.delete(req.params.id);
+      await contactService.delete(req.params.id as string);
       res.json({ message: "Message deleted" });
     } catch (err) {
       res.status(400).json({ message: err instanceof Error ? err.message : "Failed to delete message" });
@@ -368,7 +368,7 @@ export class AdminController {
   async markNotificationRead(req: AuthRequest, res: Response) {
     try {
       const { type, id } = req.params;
-      await adminService.markNotificationRead(type, id);
+      await adminService.markNotificationRead(type as string, id as string);
       res.json({ success: true });
     } catch (err) {
       res.status(400).json({ message: err instanceof Error ? err.message : "Failed to mark read" });
