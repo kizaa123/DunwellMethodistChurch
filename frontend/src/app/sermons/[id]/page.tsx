@@ -96,7 +96,6 @@ export default function SermonDetailPage() {
     year: "numeric",
   });
 
-  const isLive = isSermonLive(sermon);
   const youtubeEmbedUrl = sermon.videoUrl ? getYouTubeEmbedUrl(sermon.videoUrl) : null;
 
   if (isLive) {
