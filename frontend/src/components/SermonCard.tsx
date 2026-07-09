@@ -26,7 +26,7 @@ export default function SermonCard({ sermon }: SermonCardProps) {
     year: "numeric",
   });
 
-  const sermonHref = isLive ? "/live" : `/sermons/${sermon.id}`;
+  const sermonHref = `/sermons/${sermon.id}`;
 
   return (
     <article className="card card-elevated overflow-hidden flex flex-col h-full group">

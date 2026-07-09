@@ -145,20 +145,8 @@ export default function LivePage() {
 
   return (
     <div className="min-h-screen text-white bg-[#0b131e] pb-16">
-      {/* Dynamic Streaming Status Banner */}
-      {isCurrentlyLive ? (
-        <div className="w-full bg-red-700 text-white text-xs font-bold tracking-widest uppercase py-2.5 px-4 flex flex-wrap items-center justify-center gap-2 shadow-md">
-          <span className="relative flex h-2.5 w-2.5 shrink-0">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white" />
-          </span>
-          <span>Live Broadcast — Service Online</span>
-          <LiveViewerBadge
-            count={viewerCount}
-            className="normal-case tracking-normal text-[11px] sm:text-xs"
-          />
-        </div>
-      ) : liveSermon ? (
+      {/* Archive / switch banners only — no top bar when already watching live */}
+      {!isCurrentlyLive && liveSermon ? (
         <div className="w-full bg-[#b8911f] text-white text-xs font-bold tracking-widest uppercase py-2.5 px-4 flex flex-wrap items-center justify-center gap-3 shadow-md text-center">
           <span>You are viewing a past service archive.</span>
           <button
@@ -175,11 +163,11 @@ export default function LivePage() {
             Switch to Live Service
           </button>
         </div>
-      ) : (
+      ) : !isCurrentlyLive ? (
         <div className="w-full bg-[#1b263b] text-white/90 text-xs font-bold tracking-widest uppercase py-2.5 px-4 flex items-center justify-center gap-2 shadow-md">
           Previous Broadcast — Playing Archive
         </div>
-      )}
+      ) : null}
 
       {/* Main Workspace Grid */}
       <div className="mx-auto max-w-[1440px] sm:px-6 lg:px-8 lg:py-8">
@@ -188,6 +176,36 @@ export default function LivePage() {
           {/* Main Video Stream Container (3/4 width on desktop) */}
           <div className="lg:col-span-3 space-y-4">
             <div className="relative aspect-video w-full bg-black sm:rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+              {isCurrentlyLive ? (
+                <>
+                  <div className="absolute top-4 left-4 z-20">
+                    <div className="bg-red-600 text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded flex items-center gap-1.5 shadow-md animate-pulse">
+                      <span className="relative flex h-1.5 w-1.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
+                      </span>
+                      Live Now
+                    </div>
+                  </div>
+                  <div className="absolute top-4 right-4 z-20">
+                    <LiveViewerBadge
+                      count={viewerCount}
+                      className="text-[11px] sm:text-xs bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/20 text-white"
+                    />
+                  </div>
+                </>
+              ) : (
+                <div className="absolute top-4 left-4 z-20">
+                  <div className="bg-[#1b263b]/90 text-white/90 text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded flex items-center gap-1.5 shadow-md border border-white/15">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#e2c04e] opacity-75" />
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#e2c04e]" />
+                    </span>
+                    Archive
+                  </div>
+                </div>
+              )}
+
               {/* Video Player Loader */}
               {youtubeEmbedUrl ? (
                 <iframe

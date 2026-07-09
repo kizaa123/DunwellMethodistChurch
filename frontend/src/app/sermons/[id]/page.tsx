@@ -1,22 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
-import { api } from "@/lib/api";
+import TestimonyWall from "@/components/TestimonyWall";
+import type { Testimony } from "@/components/TestimonyWall";
+import LiveViewerBadge from "@/components/LiveViewerBadge";
+import { useLiveViewers } from "@/hooks/useLiveViewers";
+import { api, isSermonLive } from "@/lib/api";
 import { Sermon } from "@/types";
 import { featuredSermons } from "@/lib/data";
-import { isSermonLive } from "@/lib/api";
 
 export default function SermonDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const id = params.id as string;
 
   const [sermon, setSermon] = useState<Sermon | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [testimonies, setTestimonies] = useState<Testimony[]>([]);
 
   useEffect(() => {
     if (!id) return;
@@ -32,14 +35,12 @@ export default function SermonDetailPage() {
         }
       })
       .finally(() => setLoading(false));
-  }, [id]);
 
-  useEffect(() => {
-    if (!sermon || loading) return;
-    if (isSermonLive(sermon)) {
-      router.replace("/live");
-    }
-  }, [sermon, loading, router]);
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"}/testimonies`)
+      .then((r) => r.json())
+      .then((data) => { if (Array.isArray(data)) setTestimonies(data); })
+      .catch(console.error);
+  }, [id]);
 
   function getYouTubeEmbedUrl(url: string) {
     if (!url) return null;
@@ -57,7 +58,13 @@ export default function SermonDetailPage() {
     return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : null;
   }
 
-  if (loading || (sermon && isSermonLive(sermon))) {
+  const isLive = sermon ? isSermonLive(sermon) : false;
+  const viewerCount = useLiveViewers(sermon?.id, {
+    track: !loading && isLive,
+    poll: !loading && isLive,
+  });
+
+  if (loading) {
     return (
       <div className="min-h-screen bg-stone-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#1e3a5f]" />
@@ -89,7 +96,103 @@ export default function SermonDetailPage() {
     year: "numeric",
   });
 
+  const isLive = isSermonLive(sermon);
   const youtubeEmbedUrl = sermon.videoUrl ? getYouTubeEmbedUrl(sermon.videoUrl) : null;
+
+  if (isLive) {
+    return (
+      <div
+        className="min-h-screen text-white pb-12"
+        style={{ background: "linear-gradient(180deg, #0b131e 0%, #1b263b 100%)" }}
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
+          <div className="mb-4 flex flex-wrap items-center gap-3">
+            <Link
+              href="/sermons"
+              className="inline-flex items-center gap-2 text-white/50 hover:text-white/80 text-sm font-medium transition-colors"
+            >
+              ← Back to Sermons
+            </Link>
+            <Link
+              href="/live"
+              className="text-xs text-[#e2c04e]/80 hover:text-[#e2c04e] transition-colors sm:ml-auto"
+            >
+              Open full live page →
+            </Link>
+          </div>
+
+          <h1 className="font-serif text-xl sm:text-2xl font-bold mb-1">{sermon.title}</h1>
+          <p className="text-white/50 text-sm mb-6">by {sermon.speaker}</p>
+
+          <div className="grid lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-4">
+              <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl aspect-video bg-black">
+                <div className="absolute top-4 left-4 z-20">
+                  <div className="bg-red-600 text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded flex items-center gap-1.5 shadow-md animate-pulse">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
+                    </span>
+                    Live Now
+                  </div>
+                </div>
+                <div className="absolute top-4 right-4 z-20">
+                  <LiveViewerBadge
+                    count={viewerCount}
+                    className="text-[11px] sm:text-xs bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/20 text-white"
+                  />
+                </div>
+
+                {youtubeEmbedUrl ? (
+                  <iframe
+                    src={youtubeEmbedUrl}
+                    title={sermon.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full border-0"
+                  />
+                ) : sermon.videoUrl && sermon.videoUrl !== "#" ? (
+                  <div className="w-full h-full flex items-center justify-center bg-[#1e3a5f] p-8 text-center">
+                    <a
+                      href={sermon.videoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex px-6 py-3 rounded-full bg-red-600 text-white hover:bg-red-700 font-medium transition-colors"
+                    >
+                      Join Live Stream
+                    </a>
+                  </div>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-white/60 text-sm">
+                    Live stream link not configured
+                  </div>
+                )}
+              </div>
+
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+                <h2 className="font-serif text-lg font-bold mb-2">About this Message</h2>
+                <p className="text-white/70 text-sm leading-relaxed whitespace-pre-line">{sermon.description}</p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-[#e2c04e] animate-pulse" />
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/80">Live Testimonies</h3>
+              </div>
+              {testimonies.length > 0 ? (
+                <TestimonyWall testimonies={testimonies} fullscreen />
+              ) : (
+                <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-center text-white/50 text-sm">
+                  No testimonies yet
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
