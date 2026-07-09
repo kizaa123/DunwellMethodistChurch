@@ -26,6 +26,9 @@
   --transition-fast:   150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base:   250ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow:   400ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Lock site to light palette — ignore device dark mode */
+  color-scheme: light only;
 }
 
 @theme inline {
@@ -43,13 +46,47 @@
 
 html {
   scroll-behavior: smooth;
+  color-scheme: light only;
+  background-color: var(--background);
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent OS dark mode from shifting brand colors */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: hsl(30, 7%, 97%);
+    --foreground: hsl(24, 5%, 11%);
+    --muted: hsl(30, 5%, 94%);
+    --border: hsl(30, 5%, 88%);
+    --church-navy: hsl(212, 51%, 24%);
+    --church-navy-light: hsl(212, 51%, 32%);
+    --church-navy-dark: hsl(212, 51%, 16%);
+    --church-gold: hsl(41, 74%, 47%);
+    --church-gold-light: hsl(41, 74%, 56%);
+    --church-gold-dark: hsl(41, 74%, 38%);
+    color-scheme: light only;
+  }
+
+  html,
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+}
+
+/* Native form controls keep light styling */
+input,
+textarea,
+select,
+button {
+  color-scheme: light only;
 }
 
 .font-serif {

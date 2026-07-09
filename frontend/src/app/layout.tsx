@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -16,6 +16,11 @@ const playfair = Playfair_Display({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  themeColor: "#1e3a5f",
+  colorScheme: "light",
+};
+
 export const metadata: Metadata = {
   title: {
     default: "Dunwell Methodist Church",
@@ -25,6 +30,10 @@ export const metadata: Metadata = {
     "Dunwell Methodist Church — Growing in Faith, Serving in Love. Join us for worship, fellowship, and community outreach.",
   icons: {
     icon: "/favicon.png",
+  },
+  other: {
+    "color-scheme": "light only",
+    "supported-color-schemes": "light",
   },
 };
 
@@ -37,8 +46,9 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} ${playfair.variable} h-full antialiased`}
+      style={{ colorScheme: "light only" }}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col bg-[hsl(30,7%,97%)] text-[hsl(24,5%,11%)]">
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
