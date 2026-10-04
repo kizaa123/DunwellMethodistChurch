@@ -9,6 +9,7 @@ import { useLiveViewers } from "@/hooks/useLiveViewers";
 import LiveViewerBadge from "@/components/LiveViewerBadge";
 import TestimonyWall from "@/components/TestimonyWall";
 import type { Testimony } from "@/components/TestimonyWall";
+import StreamPlayer from "@/components/StreamPlayer";
 
 export default function LivePage() {
   const [sermons, setSermons] = useState<Sermon[]>([]);
@@ -19,8 +20,10 @@ export default function LivePage() {
 
   useEffect(() => {
     const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+    const sermonRequest = new AbortController();
+    const sermonTimer = setTimeout(() => sermonRequest.abort(), 8000);
     setLoading(true);
-    fetch(`${API}/sermons`)
+    fetch(`${API}/sermons`, { signal: sermonRequest.signal })
       .then((r) => r.json())
       .then((data: Sermon[]) => {
         if (Array.isArray(data) && data.length > 0) {
@@ -66,7 +69,10 @@ export default function LivePage() {
           setActiveSermon(sorted[0]);
         }
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        clearTimeout(sermonTimer);
+        setLoading(false);
+      });
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"}/testimonies`)
       .then((r) => r.json())
@@ -75,24 +81,6 @@ export default function LivePage() {
       })
       .catch(console.error);
   }, []);
-
-  function getYouTubeEmbedUrl(url: string) {
-    if (!url) return null;
-    let videoId = "";
-    if (url.includes("youtube.com/watch")) {
-      try {
-        const urlParams = new URLSearchParams(url.split("?")[1]);
-        videoId = urlParams.get("v") || "";
-      } catch {
-        // ignore
-      }
-    } else if (url.includes("youtu.be/")) {
-      videoId = url.split("youtu.be/")[1]?.split("?")[0] || "";
-    } else if (url.includes("youtube.com/embed/")) {
-      videoId = url.split("youtube.com/embed/")[1]?.split("?")[0] || "";
-    }
-    return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : null;
-  }
 
   const getFormattedDate = (dateStr: string) => {
     try {
@@ -140,7 +128,6 @@ export default function LivePage() {
     );
   }
 
-  const youtubeEmbedUrl = activeSermon.videoUrl ? getYouTubeEmbedUrl(activeSermon.videoUrl) : null;
   const isCurrentlyLive = isWatchingLive;
 
   return (
@@ -206,49 +193,7 @@ export default function LivePage() {
                 </div>
               )}
 
-              {/* Video Player Loader */}
-              {youtubeEmbedUrl ? (
-                <iframe
-                  src={youtubeEmbedUrl}
-                  title={activeSermon.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full border-0"
-                />
-              ) : activeSermon.videoUrl && activeSermon.videoUrl !== "#" ? (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1b263b] to-[#0d1b2a] text-center p-6">
-                  <div>
-                    <p className="text-lg font-medium mb-4 text-white/90">This broadcast is hosted externally.</p>
-                    <a
-                      href={activeSermon.videoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex px-6 py-2.5 rounded-full bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition-all shadow-md cursor-pointer"
-                    >
-                      Join Live Stream
-                    </a>
-                  </div>
-                </div>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center relative bg-gradient-to-br from-[#1b263b] to-[#0d1b2a]">
-                  {activeSermon.thumbnail && (
-                    <img
-                      src={activeSermon.thumbnail}
-                      alt={activeSermon.title}
-                      className="absolute inset-0 w-full h-full object-cover opacity-20"
-                    />
-                  )}
-                  <div className="relative text-center text-white/90 p-8 z-10">
-                    <div className="h-16 w-16 rounded-full bg-[#c9a227]/10 border border-[#c9a227]/30 flex items-center justify-center mx-auto mb-4">
-                      <svg className="h-8 w-8 text-[#c9a227]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                    <p className="text-sm font-semibold mb-1">No stream link configured</p>
-                    <p className="text-white/40 text-xs">Join us in person or watch our previous broadcasts</p>
-                  </div>
-                </div>
-              )}
+              <StreamPlayer url={activeSermon.videoUrl} title={activeSermon.title} />
             </div>
 
             {/* Audio & Notes download options */}

@@ -138,7 +138,7 @@ export default function AdminSermonsPage() {
             {[
               { key: "title", label: "Title", type: "text" },
               { key: "speaker", label: "Speaker", type: "text" },
-              { key: "videoUrl", label: "Video URL (YouTube link)", type: "url" },
+              { key: "videoUrl", label: "Video URL (YouTube or Facebook — plays on this site)", type: "url" },
               { key: "date", label: "Date", type: "date" },
             ].map((field) => (
               <div key={field.key}>

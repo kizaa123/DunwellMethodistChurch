@@ -255,7 +255,7 @@ export default function AdminEventsPage() {
                   required={field.key !== "liveUrl"}
                   value={form[field.key as keyof typeof form] as string}
                   onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
-                  placeholder={field.key === "liveUrl" ? "e.g., https://youtube.com/live/..." : ""}
+                  placeholder={field.key === "liveUrl" ? "YouTube or Facebook live link — plays on this site" : ""}
                   className="w-full px-4 py-2 rounded-lg border border-stone-300 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]/30 focus:border-[#1e3a5f] text-sm"
                 />
               </div>

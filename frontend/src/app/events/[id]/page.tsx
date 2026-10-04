@@ -7,6 +7,7 @@ import PageHeader from "@/components/PageHeader";
 import { api, isEventLive } from "@/lib/api";
 import { Event, EventRegistration, User } from "@/types";
 import { upcomingEvents } from "@/lib/data";
+import StreamPlayer from "@/components/StreamPlayer";
 
 export default function EventDetailPage() {
   const params = useParams();
@@ -157,24 +158,6 @@ export default function EventDetailPage() {
 
   const isRegistered = !!registration;
 
-  function getYouTubeEmbedUrl(url: string) {
-    if (!url) return null;
-    let videoId = "";
-    if (url.includes("youtube.com/watch")) {
-      try {
-        const urlParams = new URLSearchParams(url.split("?")[1]);
-        videoId = urlParams.get("v") || "";
-      } catch {
-        // ignore parsing failures
-      }
-    } else if (url.includes("youtu.be/")) {
-      videoId = url.split("youtu.be/")[1]?.split("?")[0] || "";
-    }
-    return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : null;
-  }
-
-  const youtubeEmbedUrl = event.liveUrl ? getYouTubeEmbedUrl(event.liveUrl) : null;
-
   /* ─── LIVE EVENT SCREEN ─── */
   if (isLive && event.liveUrl) {
     return (
@@ -226,53 +209,8 @@ export default function EventDetailPage() {
             </div>
 
             {/* Video Player */}
-            <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl mb-6">
-              {youtubeEmbedUrl ? (
-                <div className="aspect-video w-full">
-                  <iframe
-                    src={youtubeEmbedUrl}
-                    title={event.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full border-0"
-                  />
-                </div>
-              ) : event.liveUrl ? (
-                <div className="aspect-video w-full bg-[#1e3a5f] flex items-center justify-center text-white p-8 text-center">
-                  <div>
-                    <p className="text-lg font-medium mb-4">Live stream is hosted externally.</p>
-                    <a
-                      href={event.liveUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex px-6 py-3 rounded-full bg-red-600 text-white hover:bg-red-700 font-medium transition-colors"
-                    >
-                      Join Live Stream
-                    </a>
-                  </div>
-                </div>
-              ) : (
-                <div className="aspect-video w-full flex items-center justify-center relative"
-                  style={{ background: "linear-gradient(135deg, hsl(212,51%,16%) 0%, hsl(212,51%,24%) 100%)" }}
-                >
-                  {event.image && (
-                    <img
-                      src={event.image}
-                      alt={event.title}
-                      className="absolute inset-0 w-full h-full object-cover opacity-20"
-                    />
-                  )}
-                  <div className="relative text-center text-white p-8 z-10">
-                    <div className="h-20 w-20 rounded-full bg-red-600/20 border border-red-500/40 flex items-center justify-center mx-auto mb-4">
-                      <svg className="h-10 w-10 text-red-400" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                    </div>
-                    <p className="text-white/60 text-sm mb-2">Live stream link not configured</p>
-                    <p className="text-white/40 text-xs">Join us in person or check back soon</p>
-                  </div>
-                </div>
-              )}
+            <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl mb-6 aspect-video">
+              <StreamPlayer url={event.liveUrl} title={event.title} />
             </div>
 
             {/* Event details */}

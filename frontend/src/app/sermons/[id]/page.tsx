@@ -11,6 +11,7 @@ import { useLiveViewers } from "@/hooks/useLiveViewers";
 import { api, isSermonLive } from "@/lib/api";
 import { Sermon } from "@/types";
 import { featuredSermons } from "@/lib/data";
+import StreamPlayer from "@/components/StreamPlayer";
 
 export default function SermonDetailPage() {
   const params = useParams();
@@ -41,22 +42,6 @@ export default function SermonDetailPage() {
       .then((data) => { if (Array.isArray(data)) setTestimonies(data); })
       .catch(console.error);
   }, [id]);
-
-  function getYouTubeEmbedUrl(url: string) {
-    if (!url) return null;
-    let videoId = "";
-    if (url.includes("youtube.com/watch")) {
-      try {
-        const urlParams = new URLSearchParams(url.split("?")[1]);
-        videoId = urlParams.get("v") || "";
-      } catch {
-        // ignore parsing failures
-      }
-    } else if (url.includes("youtu.be/")) {
-      videoId = url.split("youtu.be/")[1]?.split("?")[0] || "";
-    }
-    return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : null;
-  }
 
   const isLive = sermon ? isSermonLive(sermon) : false;
   const viewerCount = useLiveViewers(sermon?.id, {
@@ -95,8 +80,6 @@ export default function SermonDetailPage() {
     day: "numeric",
     year: "numeric",
   });
-
-  const youtubeEmbedUrl = sermon.videoUrl ? getYouTubeEmbedUrl(sermon.videoUrl) : null;
 
   if (isLive) {
     return (
@@ -142,30 +125,7 @@ export default function SermonDetailPage() {
                   />
                 </div>
 
-                {youtubeEmbedUrl ? (
-                  <iframe
-                    src={youtubeEmbedUrl}
-                    title={sermon.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full border-0"
-                  />
-                ) : sermon.videoUrl && sermon.videoUrl !== "#" ? (
-                  <div className="w-full h-full flex items-center justify-center bg-[#1e3a5f] p-8 text-center">
-                    <a
-                      href={sermon.videoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex px-6 py-3 rounded-full bg-red-600 text-white hover:bg-red-700 font-medium transition-colors"
-                    >
-                      Join Live Stream
-                    </a>
-                  </div>
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-white/60 text-sm">
-                    Live stream link not configured
-                  </div>
-                )}
+                <StreamPlayer url={sermon.videoUrl} title={sermon.title} />
               </div>
 
               <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
@@ -213,42 +173,9 @@ export default function SermonDetailPage() {
 
           {/* Media Player Card */}
           <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-stone-200 mb-8">
-            {youtubeEmbedUrl ? (
-              <div className="aspect-video w-full">
-                <iframe
-                  src={youtubeEmbedUrl}
-                  title={sermon.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full border-0"
-                />
-              </div>
-            ) : sermon.videoUrl && sermon.videoUrl !== "#" ? (
-              <div className="aspect-video w-full bg-[#1e3a5f] flex items-center justify-center text-white p-8 text-center">
-                <div>
-                  <p className="text-lg font-medium mb-4">Video recording is hosted externally.</p>
-                  <a
-                    href={sermon.videoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex px-6 py-3 rounded-full bg-[#c9a227] text-white hover:bg-[#b8911f] font-medium transition-colors"
-                  >
-                    Watch Video on YouTube/Vimeo
-                  </a>
-                </div>
-              </div>
-            ) : (
-              <div className="aspect-video w-full bg-gradient-to-br from-[#1e3a5f] to-[#2a5082] flex items-center justify-center relative">
-                <div className="text-center text-white p-8">
-                  <div className="h-16 w-16 rounded-full bg-white/10 backdrop-blur flex items-center justify-center mx-auto mb-4 border border-white/20">
-                    <svg className="h-8 w-8 text-stone-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2z" />
-                    </svg>
-                  </div>
-                  <p className="text-white/80 text-sm">No video recording currently available for this sermon</p>
-                </div>
-              </div>
-            )}
+            <div className="relative aspect-video w-full">
+              <StreamPlayer url={sermon.videoUrl} title={sermon.title} />
+            </div>
 
             {/* Audio / Notes block */}
             {(sermon.audioUrl || sermon.notesUrl) && (
